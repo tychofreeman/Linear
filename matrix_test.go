@@ -32,7 +32,11 @@ func TestNonEmptyMatrixWithNilDataShouldntBeComplete(t *testing.T) {
 }
 
 func TestAddRowShouldIncrementRowCount(t *testing.T) {
+	m := MakeMatrix(2,5)
+	oldLen := len(m.data)
+	m.AddRow(1, 1, 1, 1, 1)
 	
+	FailIf(t, len(m.data) != (oldLen + 1)) 
 }
 	
 func TestNonEmptyMatrixWithMissingRowShouldBeIncomplete(t *testing.T) {

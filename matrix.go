@@ -2,6 +2,8 @@ package linear
 
 import (
 	"bignum"
+	"reflect"
+	"fmt"
 	//"log"
 )
 
@@ -16,7 +18,7 @@ type Matrix struct {
 var emptyMatrix = MakeMatrix(0,0)
 
 func MakeMatrix(rows int, cols int) Matrix {
-	return Matrix{data: nil, rows: rows, cols: cols}
+	return Matrix{data: make([]MatrixRow, rows), rows: rows, cols: cols}
 }
 
 func (m Matrix) IsZero() bool {
@@ -27,6 +29,22 @@ func (m Matrix) IsZero() bool {
 
 func (m Matrix) IsComplete() bool {
 	return m.data != nil
+}
+
+func (m Matrix) AddRow(vals ...) {
+}
+
+func forArgs(fn func(t reflect.Type), vals ...) {
+	t := reflect.Typeof(vals)
+	switch i := t.(type) {
+		case *reflect.StructType:
+			fmt.Printf("StructType: %d fields\n", i.NumField())
+			for j := 0; j < i.NumField(); j++ {
+				fmt.Printf("\tIs type int? %s %b\n", i.FieldByIndex([]int{j}).Type.(reflect.IntType))
+				//need type switch to determine type here...
+				fn(i.FieldByIndex([]int{j}).Type)
+			}
+	}
 }
 
 func (m Matrix) IsEmpty() bool {
