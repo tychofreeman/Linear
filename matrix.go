@@ -17,6 +17,21 @@ type Matrix struct {
 
 var emptyMatrix = MakeMatrix(0,0)
 
+// This will be made more efficient by using vectors instead of arrays...
+func (md MatrixData) Reduce(pred func(MatrixRow) bool) (out MatrixData) {
+	tmpOut := make(MatrixData, len(md))
+	for i := 0; i < len(md); i++ {
+		if pred(md[i]) {
+			tmpOut[i] = md[i]
+		}
+	}
+	out = make(MatrixData, len(tmpOut))
+	for i:= 0; i < len(tmpOut); i++ {
+		out[i] = tmpOut[i]
+	}
+	return
+}
+
 func MakeMatrix(rows int, cols int) Matrix {
 	return Matrix{data: make([]MatrixRow, rows), rows: rows, cols: cols}
 }
@@ -49,6 +64,15 @@ func forArgs(fn func(t reflect.Type), vals ...) {
 
 func (m Matrix) IsEmpty() bool {
 	return m.cols == 0 || m.rows == 0;
+}
+
+func (m Matrix) AddRow(vals ... int) {
+}
+
+func (m Matrix) nullRowCount() int {
+	return len(m.data.Reduce(func(mr MatrixRow) bool {
+		return mr == nil
+	}))
 }
 
 func (m Matrix) Add(addend Matrix) (Matrix, bool) {

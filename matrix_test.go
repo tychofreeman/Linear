@@ -1,11 +1,76 @@
 package linear
 import (
 	"testing"
+	"fmt"
 )
 
 func FailIf(t *testing.T, cond bool) {
 	if cond {
 		t.Fail()
+	}
+}
+
+type Tst struct {
+	t *testing.T
+}
+
+func Fail(t *testing.T) (test *Tst) {
+	test = new(Tst)
+	test.t = t
+	return
+}
+
+func (t Tst) If(msg string, pred bool) {
+	if pred {
+		t.t.Error(msg)
+	}
+}
+
+func intsAreEqual(actual int, expected int) (msg string, pred bool) {
+	msg = fmt.Sprintf("Should not have found %d, but did", actual)
+	if actual == expected {
+		pred = true
+	}
+	return
+}
+
+func intsAreNotEqual(actual int, expected int) (msg string, pred bool) {
+	msg = fmt.Sprintf("Expected %d; Actual %d", expected, actual)
+	if actual != expected {
+		pred = true
+	}
+	return
+}
+
+func TestFailIfEqualToWithUnequalInts(t *testing.T) {
+	t2 := new(testing.T)
+	Fail(t2).If(intsAreEqual(6, 5))
+	if t2.Failed() {
+		t.Error()
+	}
+}
+
+func TestFailIfEqualToWithEqualInts(t *testing.T) {
+	t2 := new(testing.T)
+	Fail(t2).If(intsAreEqual(5, 5))
+	if !t2.Failed() {
+		t.Error()
+	}
+}
+
+func TestFailIfNotEqualToWithUnequalInts(t *testing.T) {
+	t2 := new(testing.T)
+	Fail(t2).If(intsAreNotEqual(6, 5))
+	if !t2.Failed() {
+		t.Error()
+	}
+}
+
+func TestFailIfNotEqualToWithEqualInts(t *testing.T) {
+	t2 := new(testing.T)
+	Fail(t2).If(intsAreNotEqual(5, 5))
+	if t2.Failed() {
+		t.Error()
 	}
 }
 
@@ -31,26 +96,32 @@ func TestNonEmptyMatrixWithNilDataShouldntBeComplete(t *testing.T) {
 	FailIf(t, m.IsComplete())
 }
 
-func TestAddRowShouldIncrementRowCount(t *testing.T) {
-	m := MakeMatrix(2,5)
-	oldLen := len(m.data)
-	m.AddRow(1, 1, 1, 1, 1)
-	
-	FailIf(t, len(m.data) != (oldLen + 1)) 
+func TestAddRowOnBlankMatrixShouldIncrementNonNullRowCount(t *testing.T) {
+	m := MakeMatrix(10, 4)
+	oldRowCount := m.nullRowCount()
+	m.AddRow(5, 5, 3, 6)
+	newRowCount := m.nullRowCount()
+	Fail(t).If(intsAreNotEqual(oldRowCount + 1, newRowCount))
 }
 	
 func TestNonEmptyMatrixWithMissingRowShouldBeIncomplete(t *testing.T) {
+	t.Fail()
 }
 
 func TestNonEmptyMatrixWithFullDataShouldBeIncomplete(t *testing.T) {
+	t.Fail()
 }
 
 func TestMatrixWithTooFewRowsShouldBeIncopmlete(t *testing.T) {
+	t.Fail()
 }
 
 func TestMatrixWithTooManyRowsShouldNotBeNormal(t *testing.T) {
+	t.Fail()
 }
+
 func TestMatrixWithCorrectRowsAndColsShouldBeNormal(t *testing.T) {
+	t.Fail()
 }
 
 // Now put in the operations
