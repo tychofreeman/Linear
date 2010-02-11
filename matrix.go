@@ -49,6 +49,7 @@ func (m Matrix) IsComplete() bool {
 }
 
 func (m Matrix) AddRow(vals ...) bool {
+	
 	for i := 0; i < len(m.data); i++ {
 		if m.data[i] == nil {
 			m.data[i] = make(MatrixRow, m.cols)
@@ -60,6 +61,9 @@ func (m Matrix) AddRow(vals ...) bool {
 					j = j + 1
 				}, vals)
 			break
+		}
+		if i + 1 == len(m.data) {
+			return false
 		}
 	}
 	return true

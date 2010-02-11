@@ -152,7 +152,37 @@ func TestAddRowOnBlankMatrixShouldIncrementNonNullRowCount(t *testing.T) {
 	newRowCount := m.nullRowCount()
 	Fail(t).If(intsAreNotEqual(oldRowCount - 1, newRowCount))
 }
+
+func TestAddRowOnMatrixWithTwoRowsShouldIncrementNonNullRowCount(t *testing.T) {
+	m := MakeMatrix(10, 4)
+	m.AddRow(5, 5, 3, 6)
+	m.AddRow(5, 5, 3, 6)
+	oldRowCount := m.nullRowCount()
+	m.AddRow(5, 5, 3, 6)
+	newRowCount := m.nullRowCount()
+	Fail(t).If(intsAreNotEqual(oldRowCount - 1, newRowCount))
+	Fail(t).If(intsAreNotEqual(3, 10 - newRowCount))
+}
+
+func TestAddRowOnCompleteMatrixShouldReturnFalse(t *testing.T) {
+	m := MakeMatrix(4, 4)
+	m.AddRow(1, 1, 1, 1)
+	m.AddRow(1, 1, 1, 1)
+	m.AddRow(1, 1, 1, 1)
+	m.AddRow(1, 1, 1, 1)
+	oldRowCount := m.nullRowCount()
+	if oldRowCount != 0 {
+		t.Fatal("Could not proceed with test as the matrix is not correctly full.")
+	}
 	
+	success := m.AddRow(5, 5, 3, 6)
+	if success {
+		t.Error("Should not return true when adding a row to a full matrix")
+	}
+	newRowCount := m.nullRowCount()
+	Fail(t).If(intsAreNotEqual(0, newRowCount))
+}
+
 func TestNonEmptyMatrixWithMissingRowShouldBeIncomplete(t *testing.T) {
 	t.Fail()
 }
