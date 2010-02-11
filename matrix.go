@@ -3,7 +3,7 @@ package linear
 import (
 	"bignum"
 	"reflect"
-	"fmt"
+	//"fmt"
 	//"log"
 )
 
@@ -20,13 +20,15 @@ var emptyMatrix = MakeMatrix(0,0)
 // This will be made more efficient by using vectors instead of arrays...
 func (md MatrixData) Reduce(pred func(MatrixRow) bool) (out MatrixData) {
 	tmpOut := make(MatrixData, len(md))
+	count := 0
 	for i := 0; i < len(md); i++ {
 		if pred(md[i]) {
 			tmpOut[i] = md[i]
+			count += 1
 		}
 	}
-	out = make(MatrixData, len(tmpOut))
-	for i:= 0; i < len(tmpOut); i++ {
+	out = make(MatrixData, count)
+	for i:= 0; i < len(out); i++ {
 		out[i] = tmpOut[i]
 	}
 	return
@@ -46,27 +48,49 @@ func (m Matrix) IsComplete() bool {
 	return m.data != nil
 }
 
-func (m Matrix) AddRow(vals ...) {
+func (m Matrix) AddRow(vals ...) bool {
+	for i := 0; i < len(m.data); i++ {
+		if m.data[i] == nil {
+			m.data[i] = make(MatrixRow, m.cols)
+			j := 0
+			forArgs(
+				func(v reflect.Value) {
+					rational, _ := valueToRational(v)
+					m.data[i][j] = rational
+					j = j + 1
+				}, vals)
+			break
+		}
+	}
+	return true
 }
 
-func forArgs(fn func(t reflect.Type), vals ...) {
-	t := reflect.Typeof(vals)
-	switch i := t.(type) {
-		case *reflect.StructType:
-			fmt.Printf("StructType: %d fields\n", i.NumField())
+func valueToRational(v reflect.Value) (rational *bignum.Rational, success bool) {
+	rational, success = nil, false
+	switch i := v.(type) {
+		case *reflect.StringValue:
+			rational, _, _ = bignum.RatFromString(i.Get(), 10)
+			success = true
+		case *reflect.IntValue:
+			rational, success = bignum.Rat(int64(i.Get()), 1), true
+	}
+	return
+}
+
+func forArgs(fn func(reflect.Value), vals ...) {
+	
+
+	vals2 := reflect.NewValue(vals)
+	switch i := vals2.(type) {
+		case *reflect.StructValue:
 			for j := 0; j < i.NumField(); j++ {
-				fmt.Printf("\tIs type int? %s %b\n", i.FieldByIndex([]int{j}).Type.(reflect.IntType))
-				//need type switch to determine type here...
-				fn(i.FieldByIndex([]int{j}).Type)
+				fn(i.FieldByIndex([]int{j}))
 			}
 	}
 }
 
 func (m Matrix) IsEmpty() bool {
 	return m.cols == 0 || m.rows == 0;
-}
-
-func (m Matrix) AddRow(vals ... int) {
 }
 
 func (m Matrix) nullRowCount() int {

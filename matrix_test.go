@@ -1,6 +1,8 @@
 package linear
 import (
 	"testing"
+	"bignum"
+	"reflect"
 	"fmt"
 )
 
@@ -26,7 +28,7 @@ func (t Tst) If(msg string, pred bool) {
 	}
 }
 
-func intsAreEqual(actual int, expected int) (msg string, pred bool) {
+func intsAreEqual(expected, actual int) (msg string, pred bool) {
 	msg = fmt.Sprintf("Should not have found %d, but did", actual)
 	if actual == expected {
 		pred = true
@@ -34,9 +36,17 @@ func intsAreEqual(actual int, expected int) (msg string, pred bool) {
 	return
 }
 
-func intsAreNotEqual(actual int, expected int) (msg string, pred bool) {
+func intsAreNotEqual(expected, actual int) (msg string, pred bool) {
 	msg = fmt.Sprintf("Expected %d; Actual %d", expected, actual)
 	if actual != expected {
+		pred = true
+	}
+	return
+}
+
+func rationalsAreNotEqual(expected, actual *bignum.Rational) (msg string, pred bool) {
+	msg = fmt.Sprintf("Expected %o; Actual %o", expected, actual)
+	if expected.Cmp(actual) != 0 {
 		pred = true
 	}
 	return
@@ -74,6 +84,45 @@ func TestFailIfNotEqualToWithEqualInts(t *testing.T) {
 	}
 }
 
+func TestValueToRationalWithEmptyString(t *testing.T) {
+	rational, pred := valueToRational(reflect.NewValue(""))
+	if !pred {
+		t.Error("Converting an empty string to a *bignum.Rational should always be allowed.")
+	}
+	if rational == nil {
+		t.Error("Converting an empty string to a *bignum.Rational should never result in a nil Rational pointer.")
+	} else {
+		Fail(t).If(rationalsAreNotEqual(bignum.Rat(0, 1), rational))
+	}
+}
+
+func TestValueToRationalWithOne(t *testing.T) {
+	rational, pred := valueToRational(reflect.NewValue(1))
+	if !pred {
+		t.Error("Converting '1' to a *bignum.Rational should always return true.")
+	}
+	if rational == nil {
+		t.Error("Converting '1' to a *bignum.Rational should never result in a nil Rational pointer.")
+	} else {
+		Fail(t).If(rationalsAreNotEqual(bignum.Rat(1, 1), rational))
+	}
+}
+
+func TestValueToRationalWithFractionString(t *testing.T) {
+	oneFifth := "1/5"
+	sv := reflect.NewValue(oneFifth)
+	expected, _, _ := bignum.RatFromString(oneFifth, 10)
+	rational, success := valueToRational(sv)
+	if !success {
+		t.Errorf("Converting the string %s to a *bignum.Rational should always return true.", oneFifth)
+	}
+	if rational != nil {
+		Fail(t).If(rationalsAreNotEqual(rational, expected))
+	} else {
+		t.Errorf("Converting the string %s to a *bignum.Rational should never result in a nil Rational pointer.", oneFifth)
+	}
+}
+
 func TestMakeMatrixShouldReturnIncompleteMatrix(t *testing.T) {
 	m := MakeMatrix(5,5)
 	FailIf(t, m.IsComplete())
@@ -101,7 +150,7 @@ func TestAddRowOnBlankMatrixShouldIncrementNonNullRowCount(t *testing.T) {
 	oldRowCount := m.nullRowCount()
 	m.AddRow(5, 5, 3, 6)
 	newRowCount := m.nullRowCount()
-	Fail(t).If(intsAreNotEqual(oldRowCount + 1, newRowCount))
+	Fail(t).If(intsAreNotEqual(oldRowCount - 1, newRowCount))
 }
 	
 func TestNonEmptyMatrixWithMissingRowShouldBeIncomplete(t *testing.T) {
