@@ -1,6 +1,7 @@
 package linear
 import (
 	"testing"
+	"reflect"
 )
 
 func TestMakeMatrixShouldReturnIncompleteMatrix(t *testing.T) {
@@ -110,7 +111,15 @@ func TestMatrixAdditionFailsIfDifferentColumnCount(t *testing.T) {
 }
 
 func TestSetCellOnValidAddrShouldReturnTrue(t *testing.T) {
-	t.Error("Not Implemented")
+	m1 := MakeMatrix(4,4)
+	if !m1.SetCell(2, 2, 5) {
+		t.Fail()
+	}
+	ratFive, _ := valueToRational(reflect.NewValue(5))
+	if m1.data[2][2] != ratFive {
+		t.Error("Did not set cell to correct value.")
+	}
+	
 }
 func TestSetCellOnInvalidAddrShouldReturnTrue(t *testing.T) {
 	t.Error("Not Implemented")

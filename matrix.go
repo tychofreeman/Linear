@@ -2,6 +2,7 @@ package linear
 
 import (
 	"reflect"
+	"exp/iterable"
 	//"fmt"
 	//"log"
 )
@@ -22,9 +23,16 @@ func MakeMatrix(rows int, cols int) Matrix {
 }
 
 func (m Matrix) nullRowCount() int {
-	return len(m.data.Reduce(func(mr MatrixRow) bool {
-		return len(mr) == 0
-	}))
+	return len(
+		iterable.Data(
+			iterable.Filter(
+				m.data, func(mr interface{}) bool {
+					switch i := mr.(type) {
+						case MatrixRow:
+							return len(i) == 0
+					}
+					return false
+	})))
 }
 
 func (m Matrix) IsComplete() bool {
@@ -32,17 +40,10 @@ func (m Matrix) IsComplete() bool {
 }
 
 func (m Matrix) AddRow(vals ...) bool {
-	
+	// TODO: Should use Find() to get first empty row, or ???
 	for i := 0; i < len(m.data); i++ {
 		if m.data[i] == nil {
-			m.data[i] = make(MatrixRow, m.cols)
-			j := 0
-			forArgs(
-				func(v reflect.Value) {
-					rational, _ := valueToRational(v)
-					m.data[i][j] = rational
-					j = j + 1
-				}, vals)
+			m.data[i] = createRow(m.cols, vals)
 			break
 		}
 		if i + 1 == len(m.data) {
@@ -52,8 +53,31 @@ func (m Matrix) AddRow(vals ...) bool {
 	return true
 }
 
+func createRow(cols int, vals ...) MatrixRow {
+	row := make(MatrixRow, cols)
+	i := 0
+	forArgs(
+		func(v reflect.Value) {
+			rational, _ := valueToRational(v)
+			row[i] = rational
+			i += 1
+		}, vals)
+	return row
+}
+
 func (m Matrix) SetCell(row, col int, i interface{}) bool {
 	return false
+	/*
+	if 0 > row || row >= m.rows || 0 > col || col >= m.cols {
+		return false
+	}
+	r, success := valueToRational(reflect.NewValue(i))
+	if !success {
+		return false
+	}
+	m.data[row][col] = r
+	return true
+	*/
 }
 
 func (m Matrix) IsEmpty() bool {

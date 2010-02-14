@@ -21,7 +21,6 @@ func valueToRational(v reflect.Value) (rational *bignum.Rational, success bool) 
 }
 
 func forArgs(fn func(reflect.Value), vals ...) {
-	
 
 	vals2 := reflect.NewValue(vals)
 	switch i := vals2.(type) {
