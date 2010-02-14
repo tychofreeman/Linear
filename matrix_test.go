@@ -89,27 +89,6 @@ func TestMatrixWithNoMissingRowsShouldBeComplete(t *testing.T) {
 	FailIf(t, !m.IsComplete())
 }
 
-// Now put in the operations
-
-func TestMatrixAdditionFailsIfDifferentRowCount(t *testing.T) {
-	m1 := Matrix {nil, 5, 10}
-	m2 := Matrix {nil, 6, 10}
-	m, b := m1.Add(m2)
-	if !b {
-		t.Error("Should not return true if row counts differ")
-	}
-
-	if m.IsEmpty() {
-		t.Error("Should not return non-nil matrix if row counts differ")
-	}
-}
-
-func TestMatrixAdditionFailsIfDifferentColumnCount(t *testing.T) {
-	m1 := Matrix {nil, 10, 5}
-	m2 := Matrix {nil, 10, 6}
-	m1.Add(m2)
-}
-
 func TestSetCellOnValidAddrShouldPopulateColumns(t *testing.T) {
 	m1 := MakeMatrix(4,4)
 	m1.SetCell(2, 2, 5)
@@ -137,6 +116,36 @@ func TestSetCellOnValidAddrWithIntShouldSetData(t *testing.T) {
 	m1.SetCell(2, 2, 5)
 	if m1.data[2][2].Cmp(bignum.Rat(5,1)) != 0 {
 		t.Error("Did not set cell to correct value.")
+	}
+}
+
+// Now put in the operations
+
+func TestMatrixAdditionFailsIfDifferentRowCount(t *testing.T) {
+	m1 := MakeMatrix(4, 4)
+	m2 := MakeMatrix(5, 4)
+	_, b := m1.Add(m2)
+	if b {
+		t.Fail()
+	}
+}
+
+func TestMatrixAdditionFailsIfDifferentColumnCount(t *testing.T) {
+	m1 := MakeMatrix(4, 4)
+	m2 := MakeMatrix(4, 5)
+	_, b := m1.Add(m2)
+	if b {
+		t.Fail()
+	}
+	
+}
+
+func TestMatrixAdditionSucceedsIfSameRowCountAndSameColCount(t *testing.T) {
+	m1 := MakeMatrix(4, 5)
+	m2 := MakeMatrix(4, 5)
+	_, b := m1.Add(m2)
+	if !b {
+		t.Fail()
 	}
 }
 
