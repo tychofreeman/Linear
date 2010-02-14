@@ -66,18 +66,15 @@ func createRow(cols int, vals ...) MatrixRow {
 }
 
 func (m Matrix) SetCell(row, col int, i interface{}) bool {
-	return false
-	/*
 	if 0 > row || row >= m.rows || 0 > col || col >= m.cols {
 		return false
 	}
-	r, success := valueToRational(reflect.NewValue(i))
-	if !success {
-		return false
+	if len(m.data[row]) == 0 {
+		m.data[row] = make(MatrixRow, m.cols)
 	}
-	m.data[row][col] = r
-	return true
-	*/
+	var success bool
+	m.data[row][col], success = valueToRational(reflect.NewValue(i))
+	return success
 }
 
 func (m Matrix) IsEmpty() bool {

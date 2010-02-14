@@ -1,7 +1,7 @@
 package linear
 import (
 	"testing"
-	"reflect"
+	"bignum"
 )
 
 func TestMakeMatrixShouldReturnIncompleteMatrix(t *testing.T) {
@@ -110,22 +110,34 @@ func TestMatrixAdditionFailsIfDifferentColumnCount(t *testing.T) {
 	m1.Add(m2)
 }
 
+func TestSetCellOnValidAddrShouldPopulateColumns(t *testing.T) {
+	m1 := MakeMatrix(4,4)
+	m1.SetCell(2, 2, 5)
+	if len(m1.data[2]) == 0 {
+		t.Fatalf("Missing column data!!")
+	}
+}
+
 func TestSetCellOnValidAddrShouldReturnTrue(t *testing.T) {
 	m1 := MakeMatrix(4,4)
 	if !m1.SetCell(2, 2, 5) {
 		t.Fail()
 	}
-	ratFive, _ := valueToRational(reflect.NewValue(5))
-	if m1.data[2][2] != ratFive {
+}
+
+func TestSetCellOnInvalidAddrShouldReturnFalse(t *testing.T) {
+	m := MakeMatrix(2,2)
+	if m.SetCell(5,5,10) {
+		t.Fail()
+	}
+}
+
+func TestSetCellOnValidAddrWithIntShouldSetData(t *testing.T) {
+	m1 := MakeMatrix(4,4)
+	m1.SetCell(2, 2, 5)
+	if m1.data[2][2].Cmp(bignum.Rat(5,1)) != 0 {
 		t.Error("Did not set cell to correct value.")
 	}
-	
-}
-func TestSetCellOnInvalidAddrShouldReturnTrue(t *testing.T) {
-	t.Error("Not Implemented")
-}
-func TestSetCellOnValidAddrWithIntShouldSetData(t *testing.T) {
-	t.Error("Not Implemented")
 }
 
 func TestMatrixAdditionFailsIfMissingData(t *testing.T) {
