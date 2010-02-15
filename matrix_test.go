@@ -149,6 +149,62 @@ func TestMatrixAdditionSucceedsIfSameRowCountAndSameColCount(t *testing.T) {
 	}
 }
 
+func TestMatrixIsEqualToItself(t *testing.T) {
+}
+
+func TestNonZeroMatrixIsNotEqualToZeroMatrix(t *testing.T) {
+}
+
+func TestNonEmptyMatrixIsNotEqualToEmptyMatrix(t *testing.T) {
+}
+
+func TestMatrixIsEqualToACopyOfItself(t *testing.T) {
+}
+
+func TestMatrixAddedToAdditiveUnityMatrixIsEqualToItself(t *testing.T) {
+}
+
+func TestMatrixOfOnesAddedToNegativeOnesIsZeroMatrix(t *testing.T) {
+}
+
+func TestZeroMatrixHasZerosInAllCells(t *testing.T) {
+	zero := ZeroMatrix(5,5)
+	for i, r := range zero.data {
+		for j, c := range r {
+			if !c.IsZero() {
+				t.Error("Wrong value at row,col ", i, ",", j, ": found ", c, " instead of 0/1.")
+			}
+		}
+	}
+}
+
+func TestZeroMatrixEqualsZeroMatrixIfDimensionsAreNotEqual(t *testing.T) {
+	zero1 := ZeroMatrix(4, 4)
+	zero2 := ZeroMatrix(4, 5)
+	if zero1.Equals(zero2) {
+		t.Fail()
+	}
+}
+
+func TestNewMatrixIsNotEqualToZeroMatrix(t *testing.T) {
+	empty := MakeMatrix(4, 4)
+	zero := ZeroMatrix(4, 4)
+	if zero.Equals(empty) {
+		t.Error("zero.Equals(empty) should be false")
+	}
+	if empty.Equals(zero) {
+		t.Error("empty.Equals(zero) should be false")
+	}
+}
+
+func TestZeroMatrixEqualsZeroMatrixIfDimensionsAreEqual(t *testing.T) {
+	zero1 := ZeroMatrix(4, 4)
+	zero2 := ZeroMatrix(4, 4)
+	if !zero1.Equals(zero2) {
+		t.Fail()
+	}
+}
+
 func TestMatrixAdditionFailsIfMissingData(t *testing.T) {
 /*
 	one := bignum.Rat(1,1)

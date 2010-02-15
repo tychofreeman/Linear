@@ -3,6 +3,7 @@ package linear
 import (
 	"reflect"
 	"exp/iterable"
+	"bignum"
 	//"fmt"
 	//"log"
 )
@@ -26,13 +27,14 @@ func (m Matrix) nullRowCount() int {
 	return len(
 		iterable.Data(
 			iterable.Filter(
-				m.data, func(mr interface{}) bool {
+				m.data,
+				func(mr interface{}) bool {
 					switch i := mr.(type) {
 						case MatrixRow:
 							return len(i) == 0
 					}
 					return false
-	})))
+				})))
 }
 
 func (m Matrix) IsComplete() bool {
@@ -79,4 +81,33 @@ func (m Matrix) SetCell(row, col int, i interface{}) bool {
 
 func (m Matrix) IsEmpty() bool {
 	return m.cols == 0 || m.rows == 0;
+}
+
+func ZeroMatrix(rows, cols int) Matrix {
+	m := MakeMatrix(rows, cols)
+	for i := range m.data {
+		m.data[i] = make(MatrixRow, cols)
+		for j := range m.data[i] {
+			m.data[i][j] = bignum.Rat(0, 1)
+		}
+	}
+	return m
+}
+
+func (m Matrix) hasSameDimension(m2 Matrix) bool {
+	return m.cols == m2.cols && m.rows == m2.rows
+}
+
+func (m Matrix) Equals(m2 Matrix) bool {
+	if !m.hasSameDimension(m2) {
+		return false
+	}
+	for i := range m.data {
+		for j := range m.data[i] {
+			if m.data[i][j].Cmp(m2.data[i][j]) != 0 {
+				return false
+			}
+		}
+	}
+	return true
 }
