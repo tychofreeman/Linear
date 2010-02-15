@@ -17,3 +17,14 @@ func (md MatrixData) Iter() <-chan interface{} {
 	}()
 	return ch
 }
+
+func (mr MatrixRow) Iter() <-chan interface{} {
+	ch := make(chan interface{})
+	go func() {
+		for _, e := range mr {
+			ch <- e
+		}
+		close(ch)
+	}()
+	return ch
+}

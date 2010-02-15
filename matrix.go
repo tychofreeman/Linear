@@ -4,7 +4,9 @@ import (
 	"reflect"
 	"exp/iterable"
 	"bignum"
-	//"fmt"
+	"container/vector"
+	"fmt"
+	"strings"
 	//"log"
 )
 
@@ -110,6 +112,14 @@ func (m Matrix) IsDegenerate() bool {
 	return false 
 }
 
+func toStringArray(i iterable.Iterable) []string {
+	v := new(vector.StringVector)
+	for j := range i.Iter() {
+		v.Push(fmt.Sprintf("%v", j))
+	}
+	return *v
+}
+
 func (m Matrix) Equals(m2 Matrix) bool {
 
 	if !m.hasSameDimension(m2) {
@@ -119,11 +129,14 @@ func (m Matrix) Equals(m2 Matrix) bool {
 		return false
 	}
 
-	for i := range m.data {
+	for i, r := range m.data {
+
+fmt.Printf(strings.Join(toStringArray(r), ","), "\n")
 		for j := range m.data[i] {
 			if m.data[i][j] == nil {
 				return false
 			}
+			
 			if m.data[i][j].Cmp(m2.data[i][j]) != 0 {
 				return false
 			}

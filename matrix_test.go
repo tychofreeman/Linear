@@ -149,10 +149,42 @@ func TestMatrixAdditionSucceedsIfSameRowCountAndSameColCount(t *testing.T) {
 	}
 }
 
-func TestMatrixIsEqualToItself(t *testing.T) {
+func TestZeroMatrixIsEqualToZeroMatrix(t *testing.T) {
+	m1 := ZeroMatrix(4, 4)
+	m2 := ZeroMatrix(4, 4)
+	if !m1.Equals(m2) {
+		t.Fail()
+	}
+}
+
+func nonZeroMatrix4x4() Matrix {
+	m := ZeroMatrix(4, 4)
+	m.AddRow(1, 2, 3, 4)
+	m.AddRow(2, 2, 3, 4)
+	m.AddRow(3, 3, 3, 4)
+	m.AddRow(4, 4, 4, 4)
+	return m
+}
+
+func TestNonZeroMatrixIsEqualToItself(t *testing.T) {
+	m := nonZeroMatrix4x4()
+	if !m.Equals(m) {
+		t.Fail()
+	}
+}
+
+func TestNonZeroMatrixIsEqualToMatrixWithSameValues(t *testing.T) {
+	m1 := nonZeroMatrix4x4()
+	m2 := nonZeroMatrix4x4()
+	if !m1.Equals(m2) {
+		t.Fail()
+	}
 }
 
 func TestNonZeroMatrixIsNotEqualToZeroMatrix(t *testing.T) {
+	if nonZeroMatrix4x4().Equals(ZeroMatrix(4,4)) {
+		t.Fail()
+	}
 }
 
 func TestNonEmptyMatrixIsNotEqualToEmptyMatrix(t *testing.T) {
