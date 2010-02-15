@@ -174,9 +174,7 @@ func TestNonZeroMatrixIsEqualToItself(t *testing.T) {
 }
 
 func TestNonZeroMatrixIsEqualToMatrixWithSameValues(t *testing.T) {
-	m1 := nonZeroMatrix4x4()
-	m2 := nonZeroMatrix4x4()
-	if !m1.Equals(m2) {
+	if !nonZeroMatrix4x4().Equals(nonZeroMatrix4x4()) {
 		t.Fail()
 	}
 }
@@ -188,9 +186,9 @@ func TestNonZeroMatrixIsNotEqualToZeroMatrix(t *testing.T) {
 }
 
 func TestNonEmptyMatrixIsNotEqualToEmptyMatrix(t *testing.T) {
-}
-
-func TestMatrixIsEqualToACopyOfItself(t *testing.T) {
+	if nonZeroMatrix4x4().Equals(EmptyMatrix()) {
+		t.Fail()
+	}
 }
 
 func TestMatrixAddedToAdditiveUnityMatrixIsEqualToItself(t *testing.T) {
