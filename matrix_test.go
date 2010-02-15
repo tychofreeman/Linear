@@ -122,8 +122,8 @@ func TestSetCellOnValidAddrWithIntShouldSetData(t *testing.T) {
 // Now put in the operations
 
 func TestMatrixAdditionFailsIfDifferentRowCount(t *testing.T) {
-	m1 := MakeMatrix(4, 4)
-	m2 := MakeMatrix(5, 4)
+	m1 := nonZeroMatrix(4, 4)
+	m2 := nonZeroMatrix(5, 4)
 	_, b := m1.Add(m2)
 	if b {
 		t.Fail()
@@ -131,8 +131,8 @@ func TestMatrixAdditionFailsIfDifferentRowCount(t *testing.T) {
 }
 
 func TestMatrixAdditionFailsIfDifferentColumnCount(t *testing.T) {
-	m1 := MakeMatrix(4, 4)
-	m2 := MakeMatrix(4, 5)
+	m1 := nonZeroMatrix(4, 4)
+	m2 := nonZeroMatrix(4, 5)
 	_, b := m1.Add(m2)
 	if b {
 		t.Fail()
@@ -141,8 +141,8 @@ func TestMatrixAdditionFailsIfDifferentColumnCount(t *testing.T) {
 }
 
 func TestMatrixAdditionSucceedsIfSameRowCountAndSameColCount(t *testing.T) {
-	m1 := MakeMatrix(4, 5)
-	m2 := MakeMatrix(4, 5)
+	m1 := nonZeroMatrix(4, 5)
+	m2 := nonZeroMatrix(4, 5)
 	_, b := m1.Add(m2)
 	if !b {
 		t.Fail()
@@ -155,6 +155,19 @@ func TestZeroMatrixIsEqualToZeroMatrix(t *testing.T) {
 	if !m1.Equals(m2) {
 		t.Fail()
 	}
+}
+
+func nonZeroMatrix(rows, cols int) Matrix {
+	if rows <= 0 || cols <= 0 {
+		return EmptyMatrix()
+	}
+	m := ZeroMatrix(rows, cols)
+	for r := range m.data {
+		for c := range m.data {
+			m.SetCell(r, c, r + c + 1)
+		}
+	}
+	return m
 }
 
 func nonZeroMatrix4x4() Matrix {
@@ -191,10 +204,47 @@ func TestNonEmptyMatrixIsNotEqualToEmptyMatrix(t *testing.T) {
 	}
 }
 
+func TestAddingTwoMatriciesWithDifferentDimensionsShouldFail(t *testing.T) {
+	_, success := nonZeroMatrix(4,3).Add(nonZeroMatrix(3,4))
+	if success {
+		t.Fail()
+	}
+}
+
 func TestMatrixAddedToAdditiveUnityMatrixIsEqualToItself(t *testing.T) {
+	m1 := nonZeroMatrix(4, 4)
+	m2, _ := m1.Add(ZeroMatrix(4, 4))
+	if !m1.Equals(m2) {
+		t.Error("m1 != m2")
+	}
+	if !m2.Equals(m1) {
+		t.Error("m2 != m1")
+	}
+}
+
+func TestDegenerateMatrixCannotBeAddedToZeroMatrix(t *testing.T) {
+	_, success := MakeMatrix(4, 4).Add(ZeroMatrix(4, 4))
+	if success {
+		t.Fail()
+	}
 }
 
 func TestMatrixOfOnesAddedToNegativeOnesIsZeroMatrix(t *testing.T) {
+	m1 := MakeMatrix(4, 4)
+	m1.AddRow(1, 1, 1, 1)
+	m1.AddRow(1, 1, 1, 1)
+	m1.AddRow(1, 1, 1, 1)
+	m1.AddRow(1, 1, 1, 1)
+	m2 := MakeMatrix(4, 4)
+	m2.AddRow(-1, -1, -1, -1)
+	m2.AddRow(-1, -1, -1, -1)
+	m2.AddRow(-1, -1, -1, -1)
+	m2.AddRow(-1, -1, -1, -1)
+
+	m3, _ := m1.Add(m2)
+	if !m3.Equals(ZeroMatrix(4,4)) {
+		t.Fail()
+	}
 }
 
 func TestZeroMatrixHasZerosInAllCells(t *testing.T) {
@@ -264,17 +314,36 @@ func TestSingleCallOnSetCellCreatesADegenerateMatrix(t *testing.T) {
 	}
 }
 
-func TestMatrixAdditionFailsIfMissingData(t *testing.T) {
-/*
-	one := bignum.Rat(1,1)
+func TestDegenerateMatrixCannotBeMultipliedByAnotherMatrix(t *testing.T) {
+	deg := MakeMatrix(5, 5)
+	m := nonZeroMatrix(5, 5)
+	_, success := deg.Multiply(m)
+	if success {
+		t.Fail()
+	}
+}
 
-	m1 := Matrix {nil, 0, 0}
-	m2 := Matrix {
-			MatrixData{
-				MatrixRow{one, one, one},
-				MatrixRow{one, one, one},
-			},
-			2, 3 }
-	m1.Add(m2)
-*/
+func TestMatrixCannotBeMultipliedByDegenerateMatrix(t *testing.T) {
+	deg := MakeMatrix(5, 5)
+	m := nonZeroMatrix(5, 5)
+	_, success := m.Multiply(deg)
+	if success {
+		t.Fail()
+	}
+}
+
+func unitMatrix(rows int) Matrix {
+	cols := rows
+	m := ZeroMatrix(rows, cols)
+	for i := 0; i < rows; i++ {
+		m.SetCell(i, i, 1)
+	}
+	return m
+}
+
+func TestUnitMatrixMutlipliedByUnitMatrixEqualsUnitMatrix(t *testing.T) {
+	m, _ := unitMatrix(4).Multiply(unitMatrix(4))
+	if !m.Equals(unitMatrix(4)) {
+		t.Fail()
+	}
 }

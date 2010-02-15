@@ -22,7 +22,7 @@ func EmptyMatrix() Matrix {
 }
 
 func MakeMatrix(rows int, cols int) Matrix {
-	return Matrix{data: make([]MatrixRow, rows), rows: rows, cols: cols}
+	return Matrix{data: make(MatrixData, rows), rows: rows, cols: cols}
 }
 
 func (m Matrix) nullRowCount() int {
@@ -101,11 +101,11 @@ func (m Matrix) hasSameDimension(m2 Matrix) bool {
 }
 
 func (m Matrix) IsDegenerate() bool {
-	if len(m.data) != m.cols {
+	if len(m.data) != m.rows {
 		return true
 	}
 	for _, c := range m.data {
-		if len(c) != m.rows {
+		if len(c) != m.cols {
 			return true
 		}
 	}

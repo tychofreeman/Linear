@@ -5,15 +5,26 @@ import (
 )
 
 func (m Matrix) Add(addend Matrix) (Matrix, bool) {
-	if m.rows != addend.rows || m.cols != addend.cols {
+	if m.IsDegenerate() || addend.IsDegenerate() {
+		return EmptyMatrix(), false
+	}
+
+	if !m.hasSameDimension(addend) {
+		return EmptyMatrix(), false
+	}
+
+	result := ZeroMatrix(m.rows, m.cols)
+	for i := range m.data {
+		for j := range m.data[i] {
+			result.data[i][j] = m.data[i][j].Add(addend.data[i][j])
+		}
+	}
+	return result, true
+}
+
+func (m Matrix) Multiply(m2 Matrix) (Matrix, bool) {
+	if m.IsDegenerate() || m2.IsDegenerate() {
 		return EmptyMatrix(), false
 	}
 	return EmptyMatrix(), true
-	/*
-	if m.rows != addend.rows || m.cols != addend.cols {
-		//log.Exitf("Could not add matrix1(%d,%d) to matrix2(%d,%d)", m.rows, m.cols, addend.rows, addend.cols);
-		return emptyMatrix, false
-	}
-	return Matrix{}, true
-	*/
 }
