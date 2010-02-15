@@ -205,6 +205,35 @@ func TestZeroMatrixEqualsZeroMatrixIfDimensionsAreEqual(t *testing.T) {
 	}
 }
 
+func TestNewMatrixIsDegenerate(t *testing.T) {
+	m := MakeMatrix(5, 5)
+	if !m.IsDegenerate() {
+		t.Fail()
+	}
+}
+
+func TestEmptyMatrixIsNotDegenerate(t *testing.T) {
+	m := EmptyMatrix()
+	if m.IsDegenerate() {
+		t.Fail()
+	}
+}
+
+func TestZeroMatrixIsNotDegenerate(t *testing.T) {
+	zero := ZeroMatrix(4, 4)
+	if zero.IsDegenerate() {
+		t.Fail()
+	}
+}
+
+func TestSingleCallOnSetCellCreatesADegenerateMatrix(t *testing.T) {
+	m := MakeMatrix(4, 4)
+	m.SetCell(2, 2, 1)
+	if !m.IsDegenerate() {
+		t.Fail()
+	}
+}
+
 func TestMatrixAdditionFailsIfMissingData(t *testing.T) {
 /*
 	one := bignum.Rat(1,1)

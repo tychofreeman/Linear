@@ -98,12 +98,32 @@ func (m Matrix) hasSameDimension(m2 Matrix) bool {
 	return m.cols == m2.cols && m.rows == m2.rows
 }
 
+func (m Matrix) IsDegenerate() bool {
+	if len(m.data) != m.cols {
+		return true
+	}
+	for _, c := range m.data {
+		if len(c) != m.rows {
+			return true
+		}
+	}
+	return false 
+}
+
 func (m Matrix) Equals(m2 Matrix) bool {
+
 	if !m.hasSameDimension(m2) {
 		return false
 	}
+	if m.IsDegenerate() || m2.IsDegenerate() {
+		return false
+	}
+
 	for i := range m.data {
 		for j := range m.data[i] {
+			if m.data[i][j] == nil {
+				return false
+			}
 			if m.data[i][j].Cmp(m2.data[i][j]) != 0 {
 				return false
 			}
@@ -111,3 +131,4 @@ func (m Matrix) Equals(m2 Matrix) bool {
 	}
 	return true
 }
+
