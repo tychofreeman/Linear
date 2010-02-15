@@ -6,7 +6,7 @@ import (
 	"bignum"
 	"container/vector"
 	"fmt"
-	"strings"
+	//"strings"
 	//"log"
 )
 
@@ -115,9 +115,23 @@ func (m Matrix) IsDegenerate() bool {
 func toStringArray(i iterable.Iterable) []string {
 	v := new(vector.StringVector)
 	for j := range i.Iter() {
-		v.Push(fmt.Sprintf("%v", j))
+		switch t := j.(type) {
+			case *bignum.Rational:
+				v.Push(t.String())
+		}
 	}
 	return *v
+}
+
+func (m Matrix) Print(name string) {
+	fmt.Printf("%s\n", name)
+	for _, r := range m.data {
+		fmt.Printf("\t")
+		for _, c := range r {
+			fmt.Printf("%s,",  c.String())
+		}
+		fmt.Printf("\n")
+	}
 }
 
 func (m Matrix) Equals(m2 Matrix) bool {
@@ -129,9 +143,8 @@ func (m Matrix) Equals(m2 Matrix) bool {
 		return false
 	}
 
-	for i, r := range m.data {
+	for i := range m.data {
 
-fmt.Printf(strings.Join(toStringArray(r), ","), "\n")
 		for j := range m.data[i] {
 			if m.data[i][j] == nil {
 				return false

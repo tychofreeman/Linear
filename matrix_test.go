@@ -158,7 +158,7 @@ func TestZeroMatrixIsEqualToZeroMatrix(t *testing.T) {
 }
 
 func nonZeroMatrix4x4() Matrix {
-	m := ZeroMatrix(4, 4)
+	m := MakeMatrix(4, 4)
 	m.AddRow(1, 2, 3, 4)
 	m.AddRow(2, 2, 3, 4)
 	m.AddRow(3, 3, 3, 4)
