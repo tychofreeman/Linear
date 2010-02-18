@@ -100,6 +100,10 @@ func (m Matrix) hasSameDimension(m2 Matrix) bool {
 	return m.cols == m2.cols && m.rows == m2.rows
 }
 
+func (m Matrix) hasComplementaryDimension(m2 Matrix) bool {
+	return m.cols == m2.rows && m.rows == m2.cols
+}
+
 func (m Matrix) IsDegenerate() bool {
 	if len(m.data) != m.rows {
 		return true
