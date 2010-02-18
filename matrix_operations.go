@@ -28,3 +28,11 @@ func (m Matrix) Multiply(m2 Matrix) (Matrix, bool) {
 	}
 	return EmptyMatrix(), true
 }
+
+func (m Matrix) IsEchelonForm() bool {
+	return false
+}
+
+func (m Matrix) GetEchelonEquivalent() Matrix {
+	return EmptyMatrix()
+}
