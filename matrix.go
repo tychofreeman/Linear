@@ -6,6 +6,7 @@ import (
 	"bignum"
 	"container/vector"
 	"fmt"
+	"sort"
 	//"strings"
 	//"log"
 )
@@ -15,6 +16,7 @@ type Matrix struct {
 	data MatrixData
 	rows int
 	cols int
+	sort.Interface
 }
 
 func EmptyMatrix() Matrix {

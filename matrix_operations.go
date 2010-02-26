@@ -64,7 +64,7 @@ func (m Matrix) IsEchelonForm() bool {
 }
 
 func (m Matrix) GetEchelonEquivalent() Matrix {
-	
+	nonZeros := 
 	return EmptyMatrix()
 }
 

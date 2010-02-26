@@ -4,6 +4,15 @@ import (
 	"bignum"
 )
 
+func unitMatrix(rows int) Matrix {
+	cols := rows
+	m := ZeroMatrix(rows, cols)
+	for i := 0; i < rows; i++ {
+		m.SetCell(i, i, 1)
+	}
+	return m
+}
+
 func TestZeroMatrixShouldBeEchalonForm(t *testing.T) {
 	zero := ZeroMatrix(4, 4)
 	if !zero.IsEchelonForm() {
@@ -67,5 +76,46 @@ func TestReduceEqualRow(t *testing.T) {
 		if !n.IsZero() {
 			t.Errorf("Expected 0 at index %d; found %v", i, n)
 		}
+	}
+}
+
+func TestDegenerateMatrixCannotBeMultipliedByAnotherMatrix(t *testing.T) {
+	deg := MakeMatrix(5, 5)
+	m := nonZeroMatrix(5, 5)
+	_, success := deg.Multiply(m)
+	if success {
+		t.Fail()
+	}
+}
+
+func TestMatrixCannotBeMultipliedByDegenerateMatrix(t *testing.T) {
+	deg := MakeMatrix(5, 5)
+	m := nonZeroMatrix(5, 5)
+	_, success := m.Multiply(deg)
+	if success {
+		t.Fail()
+	}
+}
+
+func TestMatrixCannotBeMultipliedByMatrixWithWrongDimensions(t *testing.T) {
+	m1 := nonZeroMatrix(5,4)
+	m2 := nonZeroMatrix(4,4)
+	_, success := m1.Multiply(m2)
+	if success {
+		t.Fail()
+	}
+}
+
+func TestUnitMatrixMutlipliedByUnitMatrixShouldReturnTrue(t *testing.T) {
+	_, success := unitMatrix(4).Multiply(unitMatrix(4))
+	if !success {
+		t.Fail()
+	}
+}
+
+func TestUnitMatrixMutlipliedByUnitMatrixEqualsUnitMatrix(t *testing.T) {
+	m, _ := unitMatrix(4).Multiply(unitMatrix(4))
+	if !m.Equals(unitMatrix(4)) {
+		t.Fail()
 	}
 }
