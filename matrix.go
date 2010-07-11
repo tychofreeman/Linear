@@ -19,6 +19,15 @@ type Matrix struct {
 	sort.Interface
 }
 
+// --- Satisfying the sort.Interface interface
+func (m Matrix) Len() int {
+	return m.rows
+}
+
+func (m Matrix) Less(i, j int) bool {
+	return false;
+}
+
 func EmptyMatrix() Matrix {
 	return MakeMatrix(0,0)
 }

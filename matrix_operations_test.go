@@ -116,6 +116,17 @@ func TestUnitMatrixMutlipliedByUnitMatrixShouldReturnTrue(t *testing.T) {
 func TestUnitMatrixMutlipliedByUnitMatrixEqualsUnitMatrix(t *testing.T) {
 	m, _ := unitMatrix(4).Multiply(unitMatrix(4))
 	if !m.Equals(unitMatrix(4)) {
+		unitMatrix(4).Print("Unit(4) = ");
+		m.Print("Unit(4).Multiplied(Unit(4)) = ");
+		t.Fail()
+	}
+}
+
+func TestGaussianEquivalentOfUnitMatrixEqualsUnitMatrix(t *testing.T) {
+	m := unitMatrix(4).GetGaussianEquivalent()
+	if !m.Equals(unitMatrix(4)) {
+		unitMatrix(4).Print("unitMatrix(4) = ");
+		m.Print("unitMatrix(4).Gaussian() = ");
 		t.Fail()
 	}
 }

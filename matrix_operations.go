@@ -2,6 +2,7 @@ package linear
 
 import (
 //	"bignum"
+	"sort"
 )
 
 
@@ -31,7 +32,7 @@ func (m Matrix) Multiply(m2 Matrix) (Matrix, bool) {
 		return EmptyMatrix(), false
 	}
 
-	result := ZeroMatrix(m.rows, m.cols)
+	result := unitMatrix(m.rows);
 	return result, true
 }
 
@@ -63,9 +64,9 @@ func (m Matrix) IsEchelonForm() bool {
 	return true
 }
 
-func (m Matrix) GetEchelonEquivalent() Matrix {
-	nonZeros := 
-	return EmptyMatrix()
+func (m Matrix) GetGaussianEquivalent() Matrix {
+	sort.Sort(m)
+	return m
 }
 
 func reduceRow(mr1, mr2 MatrixRow) (MatrixRow, bool) {
