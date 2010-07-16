@@ -85,6 +85,6 @@ func reduceRow(mr1, mr2 MatrixRow) (MatrixRow, bool) {
 	return mr3, true
 }
 
-func (m Matrix) switchRows(i, j int) {
+func (m Matrix) Swap(i, j int) {
 	m.data[i], m.data[j] = m.data[j], m.data[i]
 }

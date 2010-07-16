@@ -25,7 +25,7 @@ func (m Matrix) Len() int {
 }
 
 func (m Matrix) Less(i, j int) bool {
-	return false;
+	return m.data.Less(i, j);
 }
 
 func EmptyMatrix() Matrix {

@@ -48,7 +48,7 @@ func TestMatrixWithNonZeroEntriesDirectlyAboveOnAnotherShouldNotBeEchelonForm(t 
 
 func TestSwitchRows(t *testing.T) {
 	m := nonZeroMatrix(5, 5)
-	m.switchRows(0, 4)
+	m.Swap(0, 4)
 	if m.data[4][0].Cmp(bignum.Rat(1,1)) != 0 {
 		t.Fail()
 	}
@@ -127,6 +127,19 @@ func TestGaussianEquivalentOfUnitMatrixEqualsUnitMatrix(t *testing.T) {
 	if !m.Equals(unitMatrix(4)) {
 		unitMatrix(4).Print("unitMatrix(4) = ");
 		m.Print("unitMatrix(4).Gaussian() = ");
+		t.Fail()
+	}
+}
+
+func TestGaussianEquivalentOfReorderedUnitMatrixEqualsUnitMatrix(t *testing.T) {
+	m := MakeMatrix(4, 4)
+	m.AddRow(0,0,0,1)
+	m.AddRow(0,1,0,0)
+	m.AddRow(1,0,0,0)
+	m.AddRow(0,0,1,0)
+
+	ge := m.GetGaussianEquivalent()
+	if !ge.Equals(unitMatrix(4)) {
 		t.Fail()
 	}
 }
