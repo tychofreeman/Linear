@@ -193,3 +193,55 @@ func TestNonReducedEchelonFormMatrixIsReducedEchelonFormAfterGaussianElimination
 		t.Fail()
 	}
 }
+
+func TestDuplicateRowsAreEliminatedAfterGaussianElimination(t *testing.T) {
+	m := MakeMatrix(2, 2)
+	m.AddRow(1, 2)
+	m.AddRow(1, 2)
+
+	actual := m.AfterGaussianElimination()
+
+	expected := MakeMatrix(2, 2)
+	expected.AddRow(1, 2)
+	expected.AddRow(0, 0)
+
+	if !actual.Equals(expected) {
+		t.Fail()
+	}
+}
+
+func TestRowsWhichAreMultiplesAreEliminatedAfterGaussianElimination(t *testing.T) {
+	m := MakeMatrix(2, 2)
+	m.AddRow(1, 2)
+	m.AddRow(2, 4)
+
+	actual := m.AfterGaussianElimination()
+
+	expected := MakeMatrix(2, 2)
+	expected.AddRow(2, 4)
+	expected.AddRow(0, 0)
+
+	if !actual.Equals(expected) {
+		t.Fail()
+	}
+}
+
+func TestGaussianEliminationProducesCorrectResult(t *testing.T) {
+	m := MakeMatrix(4, 4)
+	m.AddRow(5, 6, 9, 3)
+	m.AddRow(1, 1, 1, 0)
+	m.AddRow(0, 1, 3, 1)
+	m.AddRow(0, 0, 1, 1)
+
+	expected := MakeMatrix(4, 4)
+	expected.AddRow(5, 6, 9, 3)
+	expected.AddRow(0, 1, 4, 3)
+	expected.AddRow(0, 0, 1, 2)
+	expected.AddRow(0, 0, 0, 1)
+
+	actual := m.AfterGaussianElimination()
+
+	if !actual.Equals(expected) {
+		t.Fail()
+	}
+}

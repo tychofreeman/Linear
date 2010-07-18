@@ -112,7 +112,8 @@ func reduceRow(mr1, mr2 MatrixRow) (MatrixRow, bool) {
 	mr3 := make(MatrixRow, len(mr1))
 
 	for i := range mr1 {
-		mr3[i] = mr1[i].Sub(mr2[i].Mul(ratio))
+		val := mr2[i].Mul(ratio)
+		mr3[i] = mr1[i].Sub(val)
 	}
 	return mr3, true
 }
