@@ -1,12 +1,14 @@
+/* 
+	Simple matrix operations
+*/
 package linear
 
 import (
-//	"exp/bignum"
 	"sort"
-	"fmt"
 )
 
 
+// Add the given matrix by another matrix.
 func (m Matrix) Add(addend Matrix) (Matrix, bool) {
 	if m.IsDegenerate() || addend.IsDegenerate() {
 		return EmptyMatrix(), false
@@ -25,6 +27,7 @@ func (m Matrix) Add(addend Matrix) (Matrix, bool) {
 	return result, true
 }
 
+// Create an nXn matrix with '1' on the diagonal, and zeros otherwise.
 func unitMatrix(rows int) Matrix {
 	cols := rows
 	m := ZeroMatrix(rows, cols)
@@ -34,6 +37,7 @@ func unitMatrix(rows int) Matrix {
 	return m
 }
 
+// Multiply given matrix by another matrix.
 func (m Matrix) Multiply(m2 Matrix) (Matrix, bool) {
 	if m.IsDegenerate() || m2.IsDegenerate() {
 		return EmptyMatrix(), false
@@ -57,31 +61,37 @@ func lz(mr MatrixRow) (lz int) {
 	return
 }
 
+// IsReducedEchelonForm is more rigorous than IsEchelonForm in that row j must have fewer leading zeros than row j + 1.
+func (m Matrix) IsReducedEchelonForm() bool {
+	return m.isEchelonForm(true)
+}
+
+// IsEchelonForm is true if each row j has at least as many leading zeros as all previous rows.
 // TODO: We can make this use go functions, which may speed things up...
 func (m Matrix) IsEchelonForm() bool {
+	return m.isEchelonForm(false)
+}
+
+func (m Matrix) isEchelonForm(strict bool) bool {
 	prevZeros := -1
-	for i, row := range m.data {
-		for j := range row {
-			if m.data[i][j] == nil {
-				panic(fmt.Sprintf("data[%d][%d] should never be null!!", i, j))
-			}
-		}
-	}
 	for i := range m.data {
 		zeros := lz(m.data[i])
 		if zeros == len(m.data[i]) {
 			continue
 		}
-		if zeros <= prevZeros {
+		if zeros < prevZeros {
+			return false
+		}
+		if strict && zeros == prevZeros {
 			return false
 		}
 		prevZeros = zeros
-		
 	}
 	return true
 }
 
-func (m Matrix) GetGaussianEquivalent() Matrix {
+// AfterGaussianElimination returns the matrix with Gaussian elimination applied.
+func (m Matrix) AfterGaussianElimination() Matrix {
 	sort.Sort(m)
 	return m
 }
@@ -102,6 +112,7 @@ func reduceRow(mr1, mr2 MatrixRow) (MatrixRow, bool) {
 	return mr3, true
 }
 
+// Swap two rows
 func (m Matrix) Swap(i, j int) {
 	m.data[i], m.data[j] = m.data[j], m.data[i]
 }

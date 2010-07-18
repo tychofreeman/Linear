@@ -18,21 +18,47 @@ func TestUnitMatrixShouldBeEchelonForm(t *testing.T) {
 	}
 }
 
-func TestMatrixWithNoZerosShouldNotBeEchelonForm(t *testing.T) {
-	m := nonZeroMatrix(5, 5)
-	if m.IsEchelonForm() {
+func TestUnitMatrixShouldBeReducedEchelonForm(t *testing.T) {
+	unit := unitMatrix(5)
+	if !unit.IsReducedEchelonForm() {
 		t.Fail()
 	}
 }
 
-func TestMatrixWithNonZeroEntriesDirectlyAboveOnAnotherShouldNotBeEchelonForm(t *testing.T) {
+func TestMatrixWithNoZerosShouldBeEchelonForm(t *testing.T) {
+	m := nonZeroMatrix(5, 5)
+	if !m.IsEchelonForm() {
+		t.Fail()
+	}
+}
+
+func TestMatrixWithNoZerosShouldNotBeReducedEchelonForm(t *testing.T) {
+	m := nonZeroMatrix(5, 5)
+	if m.IsReducedEchelonForm() {
+		t.Fail()
+	}
+}
+
+func TestMatrixWithNonZeroEntriesDirectlyAboveOnAnotherShouldBeEchelonForm(t *testing.T) {
 	m := MakeMatrix(4, 4)
 	m.AddRow(1,2,3,4)
 	m.AddRow(0,1,2,3)
 	m.AddRow(0,1,2,3)
 	m.AddRow(0,0,1,2)
 
-	if m.IsEchelonForm() {
+	if !m.IsEchelonForm() {
+		t.Fail()
+	}
+}
+
+func TestMatrixWithNonZeroEntriesDirectlyAboveOnAnotherShouldNotBeReducedEchelonForm(t *testing.T) {
+	m := MakeMatrix(4, 4)
+	m.AddRow(1,2,3,4)
+	m.AddRow(0,1,2,3)
+	m.AddRow(0,1,2,3)
+	m.AddRow(0,0,1,2)
+
+	if m.IsReducedEchelonForm() {
 		t.Fail()
 	}
 }
@@ -114,7 +140,7 @@ func TestUnitMatrixMutlipliedByUnitMatrixEqualsUnitMatrix(t *testing.T) {
 }
 
 func TestGaussianEquivalentOfUnitMatrixEqualsUnitMatrix(t *testing.T) {
-	m := unitMatrix(4).GetGaussianEquivalent()
+	m := unitMatrix(4).AfterGaussianElimination()
 	if !m.Equals(unitMatrix(4)) {
 		unitMatrix(4).Print("unitMatrix(4) = ");
 		m.Print("unitMatrix(4).Gaussian() = ");
@@ -129,8 +155,26 @@ func TestGaussianEquivalentOfReorderedUnitMatrixEqualsUnitMatrix(t *testing.T) {
 	m.AddRow(1,0,0,0)
 	m.AddRow(0,0,1,0)
 
-	ge := m.GetGaussianEquivalent()
+	ge := m.AfterGaussianElimination()
 	if !ge.Equals(unitMatrix(4)) {
+		t.Fail()
+	}
+}
+
+func TestGaussianEquivalentReordersRegardlessOfScaleOfRow(t *testing.T) {
+	m := MakeMatrix(4,4)
+	m.AddRow(0,0,0,5)
+	m.AddRow(6, 0, 1, 10)
+	m.AddRow(0, 10, 0, 10)
+	m.AddRow(0, 0, 11, 27)
+
+	mReordered := MakeMatrix(4, 4)
+	mReordered.AddRow(6, 0, 1, 10)
+	mReordered.AddRow(0, 10, 0, 10)
+	mReordered.AddRow(0, 0, 11, 27)
+	mReordered.AddRow(0,0,0,5)
+	ge := m.AfterGaussianElimination()
+	if !ge.Equals(mReordered) {
 		t.Fail()
 	}
 }
