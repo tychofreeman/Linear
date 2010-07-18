@@ -1,17 +1,8 @@
 package linear
 import (
 	"testing"
-	"bignum"
+	"exp/bignum"
 )
-
-func unitMatrix(rows int) Matrix {
-	cols := rows
-	m := ZeroMatrix(rows, cols)
-	for i := 0; i < rows; i++ {
-		m.SetCell(i, i, 1)
-	}
-	return m
-}
 
 func TestZeroMatrixShouldBeEchalonForm(t *testing.T) {
 	zero := ZeroMatrix(4, 4)

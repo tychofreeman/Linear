@@ -1,8 +1,9 @@
 package linear
 
 import (
-//	"bignum"
+//	"exp/bignum"
 	"sort"
+	"fmt"
 )
 
 
@@ -24,6 +25,15 @@ func (m Matrix) Add(addend Matrix) (Matrix, bool) {
 	return result, true
 }
 
+func unitMatrix(rows int) Matrix {
+	cols := rows
+	m := ZeroMatrix(rows, cols)
+	for i := 0; i < rows; i++ {
+		m.SetCell(i, i, 1)
+	}
+	return m
+}
+
 func (m Matrix) Multiply(m2 Matrix) (Matrix, bool) {
 	if m.IsDegenerate() || m2.IsDegenerate() {
 		return EmptyMatrix(), false
@@ -38,8 +48,8 @@ func (m Matrix) Multiply(m2 Matrix) (Matrix, bool) {
 
 // Count leading zeros
 func lz(mr MatrixRow) (lz int) {
-	for _, i := range mr {
-		if !i.IsZero() {
+	for _, v := range mr {
+		if !v.IsZero() {
 			break
 		}
 		lz += 1
@@ -50,6 +60,13 @@ func lz(mr MatrixRow) (lz int) {
 // TODO: We can make this use go functions, which may speed things up...
 func (m Matrix) IsEchelonForm() bool {
 	prevZeros := -1
+	for i, row := range m.data {
+		for j := range row {
+			if m.data[i][j] == nil {
+				panic(fmt.Sprintf("data[%d][%d] should never be null!!", i, j))
+			}
+		}
+	}
 	for i := range m.data {
 		zeros := lz(m.data[i])
 		if zeros == len(m.data[i]) {

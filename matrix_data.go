@@ -1,7 +1,7 @@
 package linear
 
 import (
-	"bignum"
+	"exp/bignum"
 )
 
 type MatrixRow []* bignum.Rational

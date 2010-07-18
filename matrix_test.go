@@ -1,7 +1,7 @@
 package linear
 import (
 	"testing"
-	"bignum"
+	"exp/bignum"
 )
 
 func TestMakeMatrixShouldReturnIncompleteMatrix(t *testing.T) {

@@ -2,7 +2,7 @@ package linear
 
 import (
 	"fmt"
-	"bignum"
+	"exp/bignum"
 	"reflect"
 	"testing"
 )
@@ -16,17 +16,22 @@ func valueToRational(v reflect.Value) (rational *bignum.Rational, success bool) 
 			success = true
 		case *reflect.IntValue:
 			rational, success = bignum.Rat(int64(i.Get()), 1), true
+		case *reflect.InterfaceValue:
+			rational, success = valueToRational(i.Elem())
 	}
 	return
 }
 
-func forArgs(fn func(reflect.Value), vals ...) {
+func forArgs(fn func(reflect.Value), vals ...interface{} ) {
 
+	if len(vals) == 0 {
+		return
+	}
 	vals2 := reflect.NewValue(vals)
 	switch i := vals2.(type) {
-		case *reflect.StructValue:
-			for j := 0; j < i.NumField(); j++ {
-				fn(i.FieldByIndex([]int{j}))
+		case *reflect.SliceValue:
+			for j := 0; j < i.Len(); j++ {
+				fn(i.Elem(j))
 			}
 	}
 }

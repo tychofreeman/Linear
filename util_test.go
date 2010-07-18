@@ -2,7 +2,7 @@ package linear
 
 import (
 	"testing"
-	"bignum"
+	"exp/bignum"
 	"reflect"
 )
 
