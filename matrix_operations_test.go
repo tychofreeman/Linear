@@ -178,3 +178,18 @@ func TestGaussianEquivalentReordersRegardlessOfScaleOfRow(t *testing.T) {
 		t.Fail()
 	}
 }
+
+func TestNonReducedEchelonFormMatrixIsReducedEchelonFormAfterGaussianElimination(t *testing.T) {
+	m := MakeMatrix(5,5)
+	m.AddRow(1,2,3,4,5)
+	m.AddRow(2,3,4,5,6)
+	m.AddRow(0,1,2,3,4)
+	m.AddRow(0,1,1,2,3)
+	m.AddRow(0,0,0,0,1)
+
+	age := m.AfterGaussianElimination()
+
+	if !age.IsReducedEchelonForm() {
+		t.Fail()
+	}
+}

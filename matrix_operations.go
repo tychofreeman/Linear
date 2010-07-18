@@ -93,6 +93,11 @@ func (m Matrix) isEchelonForm(strict bool) bool {
 // AfterGaussianElimination returns the matrix with Gaussian elimination applied.
 func (m Matrix) AfterGaussianElimination() Matrix {
 	sort.Sort(m)
+	for i, row1 := range m.data {
+		for  j, row2 := range m.data[i+1:m.rows] {
+			m.data[j + i + 1], _ = reduceRow(row1, row2)
+		}
+	}
 	return m
 }
 
