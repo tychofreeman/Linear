@@ -5,8 +5,32 @@ import (
 	"exp/bignum"
 	"reflect"
 	"testing"
+	"exp/iterable"
 )
 
+// Create an nXn matrix with '1' on the diagonal, and zeros otherwise.
+func unitMatrix(rows int) Matrix {
+	cols := rows
+	m := ZeroMatrix(rows, cols)
+	for i := 0; i < rows; i++ {
+		m.SetCell(i, i, 1)
+	}
+	return m
+}
+
+func (m Matrix) getRow(index int) MatrixRow {
+	row := make(MatrixRow, m.cols)
+	copy(row, m.data[index])
+	return row
+}
+
+func (m Matrix) getCol(index int) MatrixRow {
+	column := make(MatrixRow, m.rows)
+	for i, row := range m.data {
+		column[i] = row[index]
+	}
+	return column
+}
 
 func valueToRational(v reflect.Value) (rational *bignum.Rational, success bool) {
 	rational, success = nil, false
@@ -82,4 +106,20 @@ func rationalsAreNotEqual(expected, actual *bignum.Rational) (msg string, pred b
 		pred = true
 	}
 	return
+}
+
+func (v MatrixRow) multiply(v2 MatrixRow) (result MatrixRow) {
+	result = make(MatrixRow, len(v))
+	for i := 0; i < len(v); i++ {
+		result[i] = v[i].Mul(v2[i])
+	}
+	return
+}
+
+func (v MatrixRow) sumAll() *bignum.Rational {
+	zero := bignum.Rat(0, 1)
+	return iterable.Inject(v, zero, sum).(*bignum.Rational)
+}
+func sum(a interface{}, b interface{}) interface{} {
+	return a.(*bignum.Rational).Add(b.(*bignum.Rational))
 }

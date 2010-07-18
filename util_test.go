@@ -77,3 +77,24 @@ func TestValueToRationalWithFractionString(t *testing.T) {
 		t.Errorf("Converting the string %s to a *bignum.Rational should never result in a nil Rational pointer.", oneFifth)
 	}
 }
+
+func TestGetRowReturnsCorrectRow(t *testing.T) {
+	m := unitMatrix(4)
+	vector := m.getRow(2)
+	v0, _ := vector[0].Value()
+	v1, _ := vector[1].Value()
+	v2, _ := vector[2].Value()
+	v3, _ := vector[3].Value()
+
+	actual := MakeMatrix(1, 4)
+	actual.AddRow(v0.Value(), v1.Value(), v2.Value(), v3.Value())
+
+	expected := MakeMatrix(1, 4)
+	expected.AddRow(0, 0, 1, 0)
+
+	if !actual.Equals(expected) {
+		expected.Print("Expected:")
+		actual.Print("Actual:")
+		t.Fail()
+	}
+}

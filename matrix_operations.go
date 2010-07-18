@@ -27,16 +27,6 @@ func (m Matrix) Add(addend Matrix) (Matrix, bool) {
 	return result, true
 }
 
-// Create an nXn matrix with '1' on the diagonal, and zeros otherwise.
-func unitMatrix(rows int) Matrix {
-	cols := rows
-	m := ZeroMatrix(rows, cols)
-	for i := 0; i < rows; i++ {
-		m.SetCell(i, i, 1)
-	}
-	return m
-}
-
 // Multiply given matrix by another matrix.
 func (m Matrix) Multiply(m2 Matrix) (Matrix, bool) {
 	if m.IsDegenerate() || m2.IsDegenerate() {
@@ -46,7 +36,16 @@ func (m Matrix) Multiply(m2 Matrix) (Matrix, bool) {
 		return EmptyMatrix(), false
 	}
 
-	result := unitMatrix(m.rows);
+	result := ZeroMatrix(m.rows, m2.cols)
+	for i := 0; i < m.cols; i++  {
+		for j := 0; j < m2.rows; j++ {
+			col := m.getCol(j)
+			row := m2.getRow(i)
+			result.data[i][j] = col.multiply(row).sumAll()
+			// Get col j from m and row i from m2
+			// Multiply the two vectors, and add the values.
+		}
+	}
 	return result, true
 }
 
@@ -67,7 +66,6 @@ func (m Matrix) IsReducedEchelonForm() bool {
 }
 
 // IsEchelonForm is true if each row j has at least as many leading zeros as all previous rows.
-// TODO: We can make this use go functions, which may speed things up...
 func (m Matrix) IsEchelonForm() bool {
 	return m.isEchelonForm(false)
 }

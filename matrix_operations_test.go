@@ -245,3 +245,19 @@ func TestGaussianEliminationProducesCorrectResult(t *testing.T) {
 		t.Fail()
 	}
 }
+
+func TestUnitMatrixMultipliedByAEqualsA(t *testing.T) {
+	a := MakeMatrix(4, 4)
+	a.AddRow(5, 9, 3, 10)
+	a.AddRow(7, 8, 15, 9)
+	a.AddRow(1, 3, 5, 7)
+	a.AddRow(11, 13, 17, 23)
+
+	unit := unitMatrix(4)
+
+	result, _ := unit.Multiply(a)
+
+	if !result.Equals(a) {
+		t.Fail()
+	}
+}
