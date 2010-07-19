@@ -5,6 +5,7 @@ package linear
 
 import (
 	"sort"
+	"exp/bignum"
 )
 
 
@@ -39,9 +40,15 @@ func (m Matrix) Multiply(m2 Matrix) (Matrix, bool) {
 	result := ZeroMatrix(m.rows, m2.cols)
 	for i := 0; i < m.cols; i++  {
 		for j := 0; j < m2.rows; j++ {
-			col := m.getCol(j)
-			row := m2.getRow(i)
-			result.data[i][j] = col.multiply(row).sumAll()
+// TODO: It would be nice not to use a string to communicate the Rational across a channel...
+			ch := make(chan string)
+			go func() {
+				col := m.getCol(j)
+				row := m2.getRow(i)
+				ch <- col.multiply(row).sumAll().String()
+			}()
+			str := <- ch
+			result.data[i][j], _, _ = bignum.RatFromString(str, 10)
 			// Get col j from m and row i from m2
 			// Multiply the two vectors, and add the values.
 		}
