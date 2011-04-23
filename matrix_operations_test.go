@@ -1,4 +1,5 @@
 package linear
+
 import (
 	"testing"
 	"exp/bignum"
@@ -41,10 +42,10 @@ func TestMatrixWithNoZerosShouldNotBeReducedEchelonForm(t *testing.T) {
 
 func TestMatrixWithNonZeroEntriesDirectlyAboveOnAnotherShouldBeEchelonForm(t *testing.T) {
 	m := MakeMatrix(4, 4)
-	m.AddRow(1,2,3,4)
-	m.AddRow(0,1,2,3)
-	m.AddRow(0,1,2,3)
-	m.AddRow(0,0,1,2)
+	m.AddRow(1, 2, 3, 4)
+	m.AddRow(0, 1, 2, 3)
+	m.AddRow(0, 1, 2, 3)
+	m.AddRow(0, 0, 1, 2)
 
 	if !m.IsEchelonForm() {
 		t.Fail()
@@ -53,10 +54,10 @@ func TestMatrixWithNonZeroEntriesDirectlyAboveOnAnotherShouldBeEchelonForm(t *te
 
 func TestMatrixWithNonZeroEntriesDirectlyAboveOnAnotherShouldNotBeReducedEchelonForm(t *testing.T) {
 	m := MakeMatrix(4, 4)
-	m.AddRow(1,2,3,4)
-	m.AddRow(0,1,2,3)
-	m.AddRow(0,1,2,3)
-	m.AddRow(0,0,1,2)
+	m.AddRow(1, 2, 3, 4)
+	m.AddRow(0, 1, 2, 3)
+	m.AddRow(0, 1, 2, 3)
+	m.AddRow(0, 0, 1, 2)
 
 	if m.IsReducedEchelonForm() {
 		t.Fail()
@@ -66,7 +67,7 @@ func TestMatrixWithNonZeroEntriesDirectlyAboveOnAnotherShouldNotBeReducedEchelon
 func TestSwitchRows(t *testing.T) {
 	m := nonZeroMatrix(5, 5)
 	m.Swap(0, 4)
-	if m.data[4][0].Cmp(bignum.Rat(1,1)) != 0 {
+	if m.data[4][0].Cmp(bignum.Rat(1, 1)) != 0 {
 		t.Fail()
 	}
 }
@@ -115,8 +116,8 @@ func TestMatrixCannotBeMultipliedByDegenerateMatrix(t *testing.T) {
 }
 
 func TestMatrixCannotBeMultipliedByMatrixWithWrongDimensions(t *testing.T) {
-	m1 := nonZeroMatrix(5,4)
-	m2 := nonZeroMatrix(4,4)
+	m1 := nonZeroMatrix(5, 4)
+	m2 := nonZeroMatrix(4, 4)
 	_, success := m1.Multiply(m2)
 	if success {
 		t.Fail()
@@ -133,8 +134,8 @@ func TestUnitMatrixMutlipliedByUnitMatrixShouldReturnTrue(t *testing.T) {
 func TestUnitMatrixMutlipliedByUnitMatrixEqualsUnitMatrix(t *testing.T) {
 	m, _ := unitMatrix(4).Multiply(unitMatrix(4))
 	if !m.Equals(unitMatrix(4)) {
-		unitMatrix(4).Print("Unit(4) = ");
-		m.Print("Unit(4).Multiplied(Unit(4)) = ");
+		unitMatrix(4).Print("Unit(4) = ")
+		m.Print("Unit(4).Multiplied(Unit(4)) = ")
 		t.Fail()
 	}
 }
@@ -142,18 +143,18 @@ func TestUnitMatrixMutlipliedByUnitMatrixEqualsUnitMatrix(t *testing.T) {
 func TestGaussianEquivalentOfUnitMatrixEqualsUnitMatrix(t *testing.T) {
 	m := unitMatrix(4).AfterGaussianElimination()
 	if !m.Equals(unitMatrix(4)) {
-		unitMatrix(4).Print("unitMatrix(4) = ");
-		m.Print("unitMatrix(4).Gaussian() = ");
+		unitMatrix(4).Print("unitMatrix(4) = ")
+		m.Print("unitMatrix(4).Gaussian() = ")
 		t.Fail()
 	}
 }
 
 func TestGaussianEquivalentOfReorderedUnitMatrixEqualsUnitMatrix(t *testing.T) {
 	m := MakeMatrix(4, 4)
-	m.AddRow(0,0,0,1)
-	m.AddRow(0,1,0,0)
-	m.AddRow(1,0,0,0)
-	m.AddRow(0,0,1,0)
+	m.AddRow(0, 0, 0, 1)
+	m.AddRow(0, 1, 0, 0)
+	m.AddRow(1, 0, 0, 0)
+	m.AddRow(0, 0, 1, 0)
 
 	ge := m.AfterGaussianElimination()
 	if !ge.Equals(unitMatrix(4)) {
@@ -162,8 +163,8 @@ func TestGaussianEquivalentOfReorderedUnitMatrixEqualsUnitMatrix(t *testing.T) {
 }
 
 func TestGaussianEquivalentReordersRegardlessOfScaleOfRow(t *testing.T) {
-	m := MakeMatrix(4,4)
-	m.AddRow(0,0,0,5)
+	m := MakeMatrix(4, 4)
+	m.AddRow(0, 0, 0, 5)
 	m.AddRow(6, 0, 1, 10)
 	m.AddRow(0, 10, 0, 10)
 	m.AddRow(0, 0, 11, 27)
@@ -172,7 +173,7 @@ func TestGaussianEquivalentReordersRegardlessOfScaleOfRow(t *testing.T) {
 	mReordered.AddRow(6, 0, 1, 10)
 	mReordered.AddRow(0, 10, 0, 10)
 	mReordered.AddRow(0, 0, 11, 27)
-	mReordered.AddRow(0,0,0,5)
+	mReordered.AddRow(0, 0, 0, 5)
 	ge := m.AfterGaussianElimination()
 	if !ge.Equals(mReordered) {
 		t.Fail()
@@ -180,12 +181,12 @@ func TestGaussianEquivalentReordersRegardlessOfScaleOfRow(t *testing.T) {
 }
 
 func TestNonReducedEchelonFormMatrixIsReducedEchelonFormAfterGaussianElimination(t *testing.T) {
-	m := MakeMatrix(5,5)
-	m.AddRow(1,2,3,4,5)
-	m.AddRow(2,3,4,5,6)
-	m.AddRow(0,1,2,3,4)
-	m.AddRow(0,1,1,2,3)
-	m.AddRow(0,0,0,0,1)
+	m := MakeMatrix(5, 5)
+	m.AddRow(1, 2, 3, 4, 5)
+	m.AddRow(2, 3, 4, 5, 6)
+	m.AddRow(0, 1, 2, 3, 4)
+	m.AddRow(0, 1, 1, 2, 3)
+	m.AddRow(0, 0, 0, 0, 1)
 
 	age := m.AfterGaussianElimination()
 

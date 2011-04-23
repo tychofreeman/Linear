@@ -32,12 +32,12 @@ func (m Matrix) Len() int {
 
 // Less satisfies the sort.Interface interface
 func (m Matrix) Less(i, j int) bool {
-	return m.data.Less(i, j);
+	return m.data.Less(i, j)
 }
 
 // EmptyMatrix creates a 0x0 matrix, which is useful only for comparison to other matricies.
 func EmptyMatrix() Matrix {
-	return MakeMatrix(0,0)
+	return MakeMatrix(0, 0)
 }
 
 // MakeMatrix initializes a matrix with a number of rows and columns
@@ -52,8 +52,8 @@ func (m Matrix) nullRowCount() int {
 				m.data,
 				func(mr interface{}) bool {
 					switch i := mr.(type) {
-						case MatrixRow:
-							return len(i) == 0
+					case MatrixRow:
+						return len(i) == 0
 					}
 					return false
 				})))
@@ -72,7 +72,7 @@ func (m Matrix) AddRow(vals ...interface{}) bool {
 			m.data[i] = createRow(m.cols, vals)
 			break
 		}
-		if i + 1 == len(m.data) {
+		if i+1 == len(m.data) {
 			return false
 		}
 	}
@@ -87,7 +87,8 @@ func createRow(cols int, vals ...interface{}) MatrixRow {
 			rational, _ := valueToRational(v)
 			row[i] = rational
 			i += 1
-		}, vals)
+		},
+		vals)
 	return row
 }
 
@@ -106,7 +107,7 @@ func (m Matrix) SetCell(row, col int, i interface{}) bool {
 
 // IsEmpty if number of rows or columns is 0.
 func (m Matrix) IsEmpty() bool {
-	return m.cols == 0 || m.rows == 0;
+	return m.cols == 0 || m.rows == 0
 }
 
 // ZeroMatrix creates an NxN matrix filled in with zero values.
@@ -139,15 +140,15 @@ func (m Matrix) IsDegenerate() bool {
 			return true
 		}
 	}
-	return false 
+	return false
 }
 
 func toStringArray(i iterable.Iterable) []string {
 	v := new(vector.StringVector)
 	for j := range i.Iter() {
 		switch t := j.(type) {
-			case *bignum.Rational:
-				v.Push(t.String())
+		case *bignum.Rational:
+			v.Push(t.String())
 		}
 	}
 	return *v
@@ -159,7 +160,7 @@ func (m Matrix) Print(name string) {
 	for _, r := range m.data {
 		fmt.Printf("\t")
 		for _, c := range r {
-			fmt.Printf("%s,",  c.String())
+			fmt.Printf("%s,", c.String())
 		}
 		fmt.Printf("\n")
 	}
@@ -188,4 +189,3 @@ func (m Matrix) Equals(m2 Matrix) bool {
 	}
 	return true
 }
-

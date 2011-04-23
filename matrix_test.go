@@ -1,11 +1,12 @@
 package linear
+
 import (
 	"testing"
 	"exp/bignum"
 )
 
 func TestMakeMatrixShouldReturnIncompleteMatrix(t *testing.T) {
-	m := MakeMatrix(5,5)
+	m := MakeMatrix(5, 5)
 	FailIf(t, m.IsComplete())
 }
 
@@ -35,7 +36,7 @@ func TestAddRowOnBlankMatrixShouldIncrementNonNullRowCount(t *testing.T) {
 	oldRowCount := m.nullRowCount()
 	m.AddRow(5, 5, 3, 6)
 	newRowCount := m.nullRowCount()
-	Fail(t).If(intsAreNotEqual(oldRowCount - 1, newRowCount))
+	Fail(t).If(intsAreNotEqual(oldRowCount-1, newRowCount))
 }
 
 func TestAddRowOnMatrixWithTwoRowsShouldIncrementNonNullRowCount(t *testing.T) {
@@ -45,8 +46,8 @@ func TestAddRowOnMatrixWithTwoRowsShouldIncrementNonNullRowCount(t *testing.T) {
 	oldRowCount := m.nullRowCount()
 	m.AddRow(5, 5, 3, 6)
 	newRowCount := m.nullRowCount()
-	Fail(t).If(intsAreNotEqual(oldRowCount - 1, newRowCount))
-	Fail(t).If(intsAreNotEqual(3, 10 - newRowCount))
+	Fail(t).If(intsAreNotEqual(oldRowCount-1, newRowCount))
+	Fail(t).If(intsAreNotEqual(3, 10-newRowCount))
 }
 
 func TestAddRowOnCompleteMatrixShouldReturnFalse(t *testing.T) {
@@ -55,7 +56,7 @@ func TestAddRowOnCompleteMatrixShouldReturnFalse(t *testing.T) {
 	m.AddRow(1, 1, 1, 1)
 	m.AddRow(1, 1, 1, 1)
 	m.AddRow(1, 1, 1, 1)
-	
+
 	success := m.AddRow(5, 5, 3, 6)
 	if success {
 		t.Error("Should not return true when adding a row to a full matrix")
@@ -74,23 +75,23 @@ func TestAddRowOnCompleteMatrixShouldHaveZeroNullRows(t *testing.T) {
 
 func TestNonEmptyMatrixWithMissingRowShouldBeIncomplete(t *testing.T) {
 	m := MakeMatrix(4, 4)
-	m.AddRow(1,1,1,1)
-	m.AddRow(1,1,1,1)
-	m.AddRow(1,1,1,1)
+	m.AddRow(1, 1, 1, 1)
+	m.AddRow(1, 1, 1, 1)
+	m.AddRow(1, 1, 1, 1)
 	FailIf(t, m.IsComplete())
 }
 
 func TestMatrixWithNoMissingRowsShouldBeComplete(t *testing.T) {
 	m := MakeMatrix(4, 4)
-	m.AddRow(1,1,1,1)
-	m.AddRow(1,1,1,1)
-	m.AddRow(1,1,1,1)
-	m.AddRow(1,1,1,1)
+	m.AddRow(1, 1, 1, 1)
+	m.AddRow(1, 1, 1, 1)
+	m.AddRow(1, 1, 1, 1)
+	m.AddRow(1, 1, 1, 1)
 	FailIf(t, !m.IsComplete())
 }
 
 func TestSetCellOnValidAddrShouldPopulateColumns(t *testing.T) {
-	m1 := MakeMatrix(4,4)
+	m1 := MakeMatrix(4, 4)
 	m1.SetCell(2, 2, 5)
 	if len(m1.data[2]) == 0 {
 		t.Fatalf("Missing column data!!")
@@ -98,23 +99,23 @@ func TestSetCellOnValidAddrShouldPopulateColumns(t *testing.T) {
 }
 
 func TestSetCellOnValidAddrShouldReturnTrue(t *testing.T) {
-	m1 := MakeMatrix(4,4)
+	m1 := MakeMatrix(4, 4)
 	if !m1.SetCell(2, 2, 5) {
 		t.Fail()
 	}
 }
 
 func TestSetCellOnInvalidAddrShouldReturnFalse(t *testing.T) {
-	m := MakeMatrix(2,2)
-	if m.SetCell(5,5,10) {
+	m := MakeMatrix(2, 2)
+	if m.SetCell(5, 5, 10) {
 		t.Fail()
 	}
 }
 
 func TestSetCellOnValidAddrWithIntShouldSetData(t *testing.T) {
-	m1 := MakeMatrix(4,4)
+	m1 := MakeMatrix(4, 4)
 	m1.SetCell(2, 2, 5)
-	if m1.data[2][2].Cmp(bignum.Rat(5,1)) != 0 {
+	if m1.data[2][2].Cmp(bignum.Rat(5, 1)) != 0 {
 		t.Error("Did not set cell to correct value.")
 	}
 }
@@ -137,7 +138,7 @@ func TestMatrixAdditionFailsIfDifferentColumnCount(t *testing.T) {
 	if b {
 		t.Fail()
 	}
-	
+
 }
 
 func TestMatrixAdditionSucceedsIfSameRowCountAndSameColCount(t *testing.T) {
@@ -164,7 +165,7 @@ func nonZeroMatrix(rows, cols int) Matrix {
 	m := ZeroMatrix(rows, cols)
 	for r := range m.data {
 		for c := range m.data {
-			m.SetCell(r, c, r + c + 1)
+			m.SetCell(r, c, r+c+1)
 		}
 	}
 	return m
@@ -193,7 +194,7 @@ func TestNonZeroMatrixIsEqualToMatrixWithSameValues(t *testing.T) {
 }
 
 func TestNonZeroMatrixIsNotEqualToZeroMatrix(t *testing.T) {
-	if nonZeroMatrix4x4().Equals(ZeroMatrix(4,4)) {
+	if nonZeroMatrix4x4().Equals(ZeroMatrix(4, 4)) {
 		t.Fail()
 	}
 }
@@ -205,7 +206,7 @@ func TestNonEmptyMatrixIsNotEqualToEmptyMatrix(t *testing.T) {
 }
 
 func TestAddingTwoMatriciesWithDifferentDimensionsShouldFail(t *testing.T) {
-	_, success := nonZeroMatrix(4,3).Add(nonZeroMatrix(3,4))
+	_, success := nonZeroMatrix(4, 3).Add(nonZeroMatrix(3, 4))
 	if success {
 		t.Fail()
 	}
@@ -242,13 +243,13 @@ func TestMatrixOfOnesAddedToNegativeOnesIsZeroMatrix(t *testing.T) {
 	m2.AddRow(-1, -1, -1, -1)
 
 	m3, _ := m1.Add(m2)
-	if !m3.Equals(ZeroMatrix(4,4)) {
+	if !m3.Equals(ZeroMatrix(4, 4)) {
 		t.Fail()
 	}
 }
 
 func TestZeroMatrixHasZerosInAllCells(t *testing.T) {
-	zero := ZeroMatrix(5,5)
+	zero := ZeroMatrix(5, 5)
 	for i, r := range zero.data {
 		for j, c := range r {
 			if !c.IsZero() {

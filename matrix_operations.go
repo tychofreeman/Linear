@@ -38,16 +38,16 @@ func (m Matrix) Multiply(m2 Matrix) (Matrix, bool) {
 	}
 
 	result := ZeroMatrix(m.rows, m2.cols)
-	for i := 0; i < m.cols; i++  {
+	for i := 0; i < m.cols; i++ {
 		for j := 0; j < m2.rows; j++ {
-// TODO: It would be nice not to use a string to communicate the Rational across a channel...
+			// TODO: It would be nice not to use a string to communicate the Rational across a channel...
 			ch := make(chan string)
 			go func() {
 				col := m.getCol(j)
 				row := m2.getRow(i)
 				ch <- col.multiply(row).sumAll().String()
 			}()
-			str := <- ch
+			str := <-ch
 			result.data[i][j], _, _ = bignum.RatFromString(str, 10)
 			// Get col j from m and row i from m2
 			// Multiply the two vectors, and add the values.
@@ -99,8 +99,8 @@ func (m Matrix) isEchelonForm(strict bool) bool {
 func (m Matrix) AfterGaussianElimination() Matrix {
 	sort.Sort(m)
 	for i, row1 := range m.data {
-		for  j, row2 := range m.data[i+1:m.rows] {
-			m.data[j + i + 1], _ = reduceRow(row1, row2)
+		for j, row2 := range m.data[i+1 : m.rows] {
+			m.data[j+i+1], _ = reduceRow(row1, row2)
 		}
 	}
 	return m
@@ -109,7 +109,7 @@ func (m Matrix) AfterGaussianElimination() Matrix {
 func reduceRow(mr1, mr2 MatrixRow) (MatrixRow, bool) {
 	lz1 := lz(mr1)
 	lz2 := lz(mr2)
-	if lz1 != lz2 || lz1 == len(mr1){
+	if lz1 != lz2 || lz1 == len(mr1) {
 		return mr2, (lz1 >= lz2)
 	}
 

@@ -6,7 +6,7 @@ package linear
 import "exp/bignum"
 
 // MatrixRow is an array of pointers to Rational objects.
-type MatrixRow []* bignum.Rational
+type MatrixRow []*bignum.Rational
 
 // MatrixData is an array of MatrixRow objects.
 type MatrixData []MatrixRow
@@ -41,11 +41,11 @@ func (mr MatrixData) Less(l, r int) bool {
 	for i := 0; i < len(mr[l]); i++ {
 		cmp := mr[l][i].Cmp(mr[r][i])
 		if cmp > 0 {
-			return true;
+			return true
 		}
 		if cmp < 0 {
-			return false;
+			return false
 		}
 	}
-	return true;
+	return true
 }
