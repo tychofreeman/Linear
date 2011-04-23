@@ -1,6 +1,8 @@
-8.out
-_gotest_.8
-_test/linear.a
-_go_.8
+*.out
+*.a
+*/*.a
+*.8
 _obj/
 tmp*/
+src/*.8
+src/*.6
