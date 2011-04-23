@@ -2,9 +2,10 @@ package linear
 
 import (
 	"testing"
-	"exp/bignum"
 	"reflect"
 )
+
+import . "big"
 
 
 func TestFailIfEqualToWithUnequalInts(t *testing.T) {
@@ -47,7 +48,7 @@ func TestValueToRationalWithEmptyString(t *testing.T) {
 	if rational == nil {
 		t.Error("Converting an empty string to a *bignum.Rational should never result in a nil Rational pointer.")
 	} else {
-		Fail(t).If(rationalsAreNotEqual(bignum.Rat(0, 1), rational))
+		Fail(t).If(rationalsAreNotEqual(NewRat(0, 1), rational))
 	}
 }
 
@@ -59,14 +60,14 @@ func TestValueToRationalWithOne(t *testing.T) {
 	if rational == nil {
 		t.Error("Converting '1' to a *bignum.Rational should never result in a nil Rational pointer.")
 	} else {
-		Fail(t).If(rationalsAreNotEqual(bignum.Rat(1, 1), rational))
+		Fail(t).If(rationalsAreNotEqual(NewRat(1, 1), rational))
 	}
 }
 
 func TestValueToRationalWithFractionString(t *testing.T) {
 	oneFifth := "1/5"
 	sv := reflect.NewValue(oneFifth)
-	expected, _, _ := bignum.RatFromString(oneFifth, 10)
+	expected, _ := new(*Rat).SetString(oneFifth)
 	rational, success := valueToRational(sv)
 	if !success {
 		t.Errorf("Converting the string %s to a *bignum.Rational should always return true.", oneFifth)
@@ -81,13 +82,13 @@ func TestValueToRationalWithFractionString(t *testing.T) {
 func TestGetRowReturnsCorrectRow(t *testing.T) {
 	m := unitMatrix(4)
 	vector := m.getRow(2)
-	v0, _ := vector[0].Value()
-	v1, _ := vector[1].Value()
-	v2, _ := vector[2].Value()
-	v3, _ := vector[3].Value()
+	v0 := vector[0]
+	v1 := vector[1]
+	v2 := vector[2]
+	v3 := vector[3]
 
 	actual := MakeMatrix(1, 4)
-	actual.AddRow(v0.Value(), v1.Value(), v2.Value(), v3.Value())
+	actual.AddRow(v0, v1, v2, v3)
 
 	expected := MakeMatrix(1, 4)
 	expected.AddRow(0, 0, 1, 0)

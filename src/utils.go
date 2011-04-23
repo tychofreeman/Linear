@@ -2,11 +2,11 @@ package linear
 
 import (
 	"fmt"
-	"exp/bignum"
 	"reflect"
 	"testing"
-	"exp/iterable"
 )
+
+import . "big"
 
 // Create an nXn matrix with '1' on the diagonal, and zeros otherwise.
 func unitMatrix(rows int) Matrix {
@@ -32,14 +32,14 @@ func (m Matrix) getCol(index int) MatrixRow {
 	return column
 }
 
-func valueToRational(v reflect.Value) (rational *bignum.Rational, success bool) {
+func valueToRational(v reflect.Value) (rational *Rat, success bool) {
 	rational, success = nil, false
 	switch i := v; i.Kind() {
 	case reflect.String:
-		rational, _, _ = bignum.RatFromString(i.String(), 10)
+		rational, _ = new(*Rat).SetString(i.String())
 		success = true
 	case reflect.Int, reflect.Int8, reflect.Int16, reflect.Int32, reflect.Int64:
-		rational, success = bignum.Rat(int64(i.Int()), 1), true
+		rational, success = NewRat(int64(i.Int()), 1), true
 	case reflect.Interface:
 		rational, success = valueToRational(i.Elem())
 	}
@@ -47,7 +47,6 @@ func valueToRational(v reflect.Value) (rational *bignum.Rational, success bool) 
 }
 
 func forArgs(fn func(reflect.Value), vals ...interface{}) {
-
 	if len(vals) == 0 {
 		return
 	}
@@ -100,7 +99,7 @@ func intsAreNotEqual(expected, actual int) (msg string, pred bool) {
 	return
 }
 
-func rationalsAreNotEqual(expected, actual *bignum.Rational) (msg string, pred bool) {
+func rationalsAreNotEqual(expected, actual *Rat) (msg string, pred bool) {
 	msg = fmt.Sprintf("Expected %o; Actual %o", expected, actual)
 	if expected.Cmp(actual) != 0 {
 		pred = true
@@ -111,15 +110,19 @@ func rationalsAreNotEqual(expected, actual *bignum.Rational) (msg string, pred b
 func (v MatrixRow) multiply(v2 MatrixRow) (result MatrixRow) {
 	result = make(MatrixRow, len(v))
 	for i := 0; i < len(v); i++ {
-		result[i] = v[i].Mul(v2[i])
+		result[i] = new(*Rat).Mul(v[i], v2[i])
 	}
 	return
 }
 
-func (v MatrixRow) sumAll() *bignum.Rational {
-	zero := bignum.Rat(0, 1)
-	return iterable.Inject(v, zero, sum).(*bignum.Rational)
+func (v MatrixRow) sumAll() *Rat{
+	sum := NewRat(0, 1)
+	for _, r := range v {
+		sum = sum.Add(sum, r)
+	}
+	return sum
 }
+
 func sum(a interface{}, b interface{}) interface{} {
-	return a.(*bignum.Rational).Add(b.(*bignum.Rational))
+	return new(*Rat).Add(a.(*Rat), b.(*Rat))
 }

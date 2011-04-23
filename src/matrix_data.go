@@ -3,10 +3,10 @@
 */
 package linear
 
-import "exp/bignum"
+import . "big"
 
 // MatrixRow is an array of pointers to Rational objects.
-type MatrixRow []*bignum.Rational
+type MatrixRow []*Rat
 
 // MatrixData is an array of MatrixRow objects.
 type MatrixData []MatrixRow

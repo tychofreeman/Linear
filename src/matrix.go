@@ -6,14 +6,13 @@ package linear
 
 import (
 	"reflect"
-	"exp/iterable"
-	"exp/bignum"
-	"container/vector"
 	"fmt"
 	"sort"
 	//"strings"
 	//"log"
 )
+
+import . "big"
 
 
 // Matrix is a two-dimensional collection of Rational numbers.
@@ -45,18 +44,13 @@ func MakeMatrix(rows int, cols int) Matrix {
 	return Matrix{data: make(MatrixData, rows), rows: rows, cols: cols}
 }
 
-func (m Matrix) nullRowCount() int {
-	return len(
-		iterable.Data(
-			iterable.Filter(
-				m.data,
-				func(mr interface{}) bool {
-					switch i := mr.(type) {
-					case MatrixRow:
-						return len(i) == 0
-					}
-					return false
-				})))
+func (m Matrix) nullRowCount() (nullCount int) {
+	for _, r := range m.data {
+		if len(r) == 0 {
+			nullCount = nullCount + 1
+		}
+	}
+	return
 }
 
 // IsComplete only if there are no null rows.
@@ -116,7 +110,7 @@ func ZeroMatrix(rows, cols int) Matrix {
 	for i := range m.data {
 		m.data[i] = make(MatrixRow, cols)
 		for j := range m.data[i] {
-			m.data[i][j] = bignum.Rat(0, 1)
+			m.data[i][j] = NewRat(0, 1)
 		}
 	}
 	return m
@@ -141,17 +135,6 @@ func (m Matrix) IsDegenerate() bool {
 		}
 	}
 	return false
-}
-
-func toStringArray(i iterable.Iterable) []string {
-	v := new(vector.StringVector)
-	for j := range i.Iter() {
-		switch t := j.(type) {
-		case *bignum.Rational:
-			v.Push(t.String())
-		}
-	}
-	return *v
 }
 
 // Print out the matrix values as pretty as possible.

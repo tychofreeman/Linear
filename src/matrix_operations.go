@@ -5,8 +5,9 @@ package linear
 
 import (
 	"sort"
-	"exp/bignum"
 )
+
+import . "big"
 
 
 // Add the given matrix by another matrix.
@@ -22,7 +23,7 @@ func (m Matrix) Add(addend Matrix) (Matrix, bool) {
 	result := ZeroMatrix(m.rows, m.cols)
 	for i := range m.data {
 		for j := range m.data[i] {
-			result.data[i][j] = m.data[i][j].Add(addend.data[i][j])
+			result.data[i][j] = new(Rat).Add(m.data[i][j], addend.data[i][j])
 		}
 	}
 	return result, true
@@ -41,14 +42,13 @@ func (m Matrix) Multiply(m2 Matrix) (Matrix, bool) {
 	for i := 0; i < m.cols; i++ {
 		for j := 0; j < m2.rows; j++ {
 			// TODO: It would be nice not to use a string to communicate the Rational across a channel...
-			ch := make(chan string)
+			ch := make(chan *Rat)
 			go func() {
 				col := m.getCol(j)
 				row := m2.getRow(i)
-				ch <- col.multiply(row).sumAll().String()
+				ch <- col.multiply(row).sumAll()
 			}()
-			str := <-ch
-			result.data[i][j], _, _ = bignum.RatFromString(str, 10)
+			result.data[i][j] = <- ch
 			// Get col j from m and row i from m2
 			// Multiply the two vectors, and add the values.
 		}
@@ -59,7 +59,7 @@ func (m Matrix) Multiply(m2 Matrix) (Matrix, bool) {
 // Count leading zeros
 func lz(mr MatrixRow) (lz int) {
 	for _, v := range mr {
-		if !v.IsZero() {
+		if v.Sign() != 0 {
 			break
 		}
 		lz += 1
@@ -113,12 +113,12 @@ func reduceRow(mr1, mr2 MatrixRow) (MatrixRow, bool) {
 		return mr2, (lz1 >= lz2)
 	}
 
-	ratio := mr1[lz1].Quo(mr2[lz1])
+	ratio := new(*Rat).Quo(mr1[lz1], mr2[lz1])
 	mr3 := make(MatrixRow, len(mr1))
 
 	for i := range mr1 {
-		val := mr2[i].Mul(ratio)
-		mr3[i] = mr1[i].Sub(val)
+		val := new(*Rat).Mul(mr2[i], ratio)
+		mr3[i] = new(*Rat).Sub(mr1[i], val)
 	}
 	return mr3, true
 }

@@ -2,8 +2,9 @@ package linear
 
 import (
 	"testing"
-	"exp/bignum"
 )
+
+import . "big"
 
 func TestZeroMatrixShouldBeEchalonForm(t *testing.T) {
 	zero := ZeroMatrix(4, 4)
@@ -67,7 +68,7 @@ func TestMatrixWithNonZeroEntriesDirectlyAboveOnAnotherShouldNotBeReducedEchelon
 func TestSwitchRows(t *testing.T) {
 	m := nonZeroMatrix(5, 5)
 	m.Swap(0, 4)
-	if m.data[4][0].Cmp(bignum.Rat(1, 1)) != 0 {
+	if m.data[4][0].Cmp(NewRat(1, 1)) != 0 {
 		t.Fail()
 	}
 }
@@ -91,7 +92,7 @@ func TestReduceEqualRow(t *testing.T) {
 		t.Fail()
 	}
 	for i, n := range m3 {
-		if !n.IsZero() {
+		if n.Sign() != 0 {
 			t.Errorf("Expected 0 at index %d; found %v", i, n)
 		}
 	}

@@ -1,9 +1,8 @@
 package linear
 
-import (
-	"testing"
-	"exp/bignum"
-)
+import "testing"
+
+import . "big"
 
 func TestMakeMatrixShouldReturnIncompleteMatrix(t *testing.T) {
 	m := MakeMatrix(5, 5)
@@ -115,7 +114,7 @@ func TestSetCellOnInvalidAddrShouldReturnFalse(t *testing.T) {
 func TestSetCellOnValidAddrWithIntShouldSetData(t *testing.T) {
 	m1 := MakeMatrix(4, 4)
 	m1.SetCell(2, 2, 5)
-	if m1.data[2][2].Cmp(bignum.Rat(5, 1)) != 0 {
+	if m1.data[2][2].Cmp(NewRat(5, 1)) != 0 {
 		t.Error("Did not set cell to correct value.")
 	}
 }
@@ -252,7 +251,7 @@ func TestZeroMatrixHasZerosInAllCells(t *testing.T) {
 	zero := ZeroMatrix(5, 5)
 	for i, r := range zero.data {
 		for j, c := range r {
-			if !c.IsZero() {
+			if c.Sign() != 0 {
 				t.Error("Wrong value at row,col ", i, ",", j, ": found ", c, " instead of 0/1.")
 			}
 		}
