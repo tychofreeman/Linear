@@ -67,7 +67,7 @@ func TestValueToRationalWithOne(t *testing.T) {
 func TestValueToRationalWithFractionString(t *testing.T) {
 	oneFifth := "1/5"
 	sv := reflect.NewValue(oneFifth)
-	expected, _ := new(*Rat).SetString(oneFifth)
+	expected, _ := new(Rat).SetString(oneFifth)
 	rational, success := valueToRational(sv)
 	if !success {
 		t.Errorf("Converting the string %s to a *bignum.Rational should always return true.", oneFifth)
@@ -82,10 +82,10 @@ func TestValueToRationalWithFractionString(t *testing.T) {
 func TestGetRowReturnsCorrectRow(t *testing.T) {
 	m := unitMatrix(4)
 	vector := m.getRow(2)
-	v0 := vector[0]
-	v1 := vector[1]
-	v2 := vector[2]
-	v3 := vector[3]
+	v0 := vector[0].Num().Int64()
+	v1 := vector[1].Num().Int64()
+	v2 := vector[2].Num().Int64()
+	v3 := vector[3].Num().Int64()
 
 	actual := MakeMatrix(1, 4)
 	actual.AddRow(v0, v1, v2, v3)

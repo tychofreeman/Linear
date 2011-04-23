@@ -39,6 +39,7 @@ func (mr MatrixRow) Iter() <-chan interface{} {
 func (mr MatrixData) Less(l, r int) bool {
 	// TODO: This needs to do a comparison against the matrix rows...
 	for i := 0; i < len(mr[l]); i++ {
+		if mr[l][i] == nil { return mr[r][i] == nil }
 		cmp := mr[l][i].Cmp(mr[r][i])
 		if cmp > 0 {
 			return true

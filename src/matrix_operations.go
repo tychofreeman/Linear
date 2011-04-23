@@ -59,7 +59,7 @@ func (m Matrix) Multiply(m2 Matrix) (Matrix, bool) {
 // Count leading zeros
 func lz(mr MatrixRow) (lz int) {
 	for _, v := range mr {
-		if v.Sign() != 0 {
+		if v != nil && v.Sign() != 0 {
 			break
 		}
 		lz += 1
@@ -113,12 +113,12 @@ func reduceRow(mr1, mr2 MatrixRow) (MatrixRow, bool) {
 		return mr2, (lz1 >= lz2)
 	}
 
-	ratio := new(*Rat).Quo(mr1[lz1], mr2[lz1])
+	ratio := new(Rat).Quo(mr1[lz1], mr2[lz1])
 	mr3 := make(MatrixRow, len(mr1))
 
 	for i := range mr1 {
-		val := new(*Rat).Mul(mr2[i], ratio)
-		mr3[i] = new(*Rat).Sub(mr1[i], val)
+		val := new(Rat).Mul(mr2[i], ratio)
+		mr3[i] = new(Rat).Sub(mr1[i], val)
 	}
 	return mr3, true
 }

@@ -8,6 +8,7 @@ import (
 	"reflect"
 	"fmt"
 	"sort"
+	"io"
 	//"strings"
 	//"log"
 )
@@ -59,30 +60,23 @@ func (m Matrix) IsComplete() bool {
 }
 
 // AddRow with the specified integer or string values.
-func (m Matrix) AddRow(vals ...interface{}) bool {
+func (m Matrix) AddRow(vals ...int64) bool {
 	// TODO: Should use Find() to get first empty row, or ???
 	for i := 0; i < len(m.data); i++ {
 		if m.data[i] == nil {
-			m.data[i] = createRow(m.cols, vals)
-			break
-		}
-		if i+1 == len(m.data) {
-			return false
+			m.data[i] = createRow(m.cols, vals...)
+			return true
 		}
 	}
-	return true
+	return false
 }
 
-func createRow(cols int, vals ...interface{}) MatrixRow {
+func createRow(cols int, vals ...int64) MatrixRow {
 	row := make(MatrixRow, cols)
-	i := 0
-	forArgs(
-		func(v reflect.Value) {
-			rational, _ := valueToRational(v)
-			row[i] = rational
-			i += 1
-		},
-		vals)
+	for i, v := range vals {
+		row[i] = NewRat(v, 1)
+		i += 1
+	}
 	return row
 }
 
@@ -113,7 +107,24 @@ func ZeroMatrix(rows, cols int) Matrix {
 			m.data[i][j] = NewRat(0, 1)
 		}
 	}
+
 	return m
+}
+
+func (m Matrix) print(w io.Writer, title string) {
+	fmt.Fprintf(w, "Printing Matrix %v (%v rows, %v cols):\n", title, m.rows, m.cols)
+	for i := 0; i < m.rows; i++ {
+		fmt.Fprintf(w, "\t[")
+		for j := 0; j < m.cols; j++ {
+			cellStr := "<nil>"
+			cell := m.data[i][j]
+			if cell != nil {
+				cellStr = fmt.Sprintf("%v, ", cell)
+			}
+			fmt.Fprintf(w, cellStr)
+		}
+		fmt.Fprintf(w, "]\n")
+	}
 }
 
 func (m Matrix) hasSameDimension(m2 Matrix) bool {

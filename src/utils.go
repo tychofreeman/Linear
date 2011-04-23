@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"reflect"
 	"testing"
+	"os"
 )
 
 import . "big"
@@ -36,7 +37,11 @@ func valueToRational(v reflect.Value) (rational *Rat, success bool) {
 	rational, success = nil, false
 	switch i := v; i.Kind() {
 	case reflect.String:
-		rational, _ = new(*Rat).SetString(i.String())
+		str := i.String()
+		if len(str) == 0 {
+			str = "0"
+		}
+		rational, _ = new(Rat).SetString(str)
 		success = true
 	case reflect.Int, reflect.Int8, reflect.Int16, reflect.Int32, reflect.Int64:
 		rational, success = NewRat(int64(i.Int()), 1), true
@@ -108,9 +113,21 @@ func rationalsAreNotEqual(expected, actual *Rat) (msg string, pred bool) {
 }
 
 func (v MatrixRow) multiply(v2 MatrixRow) (result MatrixRow) {
+	if v2 == nil {
+		fmt.Fprintf(os.Stderr, "MatrixRow cannot be null here\n")
+	}
+	if len(v2) < len(v) {
+		fmt.Fprintf(os.Stderr, "Length of v2 (%v) < length of v (%v)\n", len(v2), len(v))
+	}
 	result = make(MatrixRow, len(v))
 	for i := 0; i < len(v); i++ {
-		result[i] = new(*Rat).Mul(v[i], v2[i])
+		if v[i] == nil {
+			v[i] = NewRat(0, 1)
+		}
+		if v2[i] == nil {
+			v2[i] = NewRat(0, 1)
+		}
+		result[i] = new(Rat).Mul(v[i], v2[i])
 	}
 	return
 }
@@ -124,5 +141,5 @@ func (v MatrixRow) sumAll() *Rat{
 }
 
 func sum(a interface{}, b interface{}) interface{} {
-	return new(*Rat).Add(a.(*Rat), b.(*Rat))
+	return new(Rat).Add(a.(*Rat), b.(*Rat))
 }
