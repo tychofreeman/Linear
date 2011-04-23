@@ -34,13 +34,13 @@ func (m Matrix) getCol(index int) MatrixRow {
 
 func valueToRational(v reflect.Value) (rational *bignum.Rational, success bool) {
 	rational, success = nil, false
-	switch i := v.(type) {
-	case *reflect.StringValue:
-		rational, _, _ = bignum.RatFromString(i.Get(), 10)
+	switch i := v; i.Kind() {
+	case reflect.String:
+		rational, _, _ = bignum.RatFromString(i.String(), 10)
 		success = true
-	case *reflect.IntValue:
-		rational, success = bignum.Rat(int64(i.Get()), 1), true
-	case *reflect.InterfaceValue:
+	case reflect.Int, reflect.Int8, reflect.Int16, reflect.Int32, reflect.Int64:
+		rational, success = bignum.Rat(int64(i.Int()), 1), true
+	case reflect.Interface:
 		rational, success = valueToRational(i.Elem())
 	}
 	return
@@ -52,10 +52,10 @@ func forArgs(fn func(reflect.Value), vals ...interface{}) {
 		return
 	}
 	vals2 := reflect.NewValue(vals)
-	switch i := vals2.(type) {
-	case *reflect.SliceValue:
+	switch i := vals2; i.Kind() {
+	case reflect.Slice:
 		for j := 0; j < i.Len(); j++ {
-			fn(i.Elem(j))
+			fn(i.Index(j))
 		}
 	}
 }
